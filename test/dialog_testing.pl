@@ -1,12 +1,12 @@
 :- module(dialog_testing, [get_test/2, run_test_from_dict/1, run_test/2]).
 :- use_module(db).
-:- use_module(library(yaml)).
 :- use_module(isu_engine).
+:- use_module(config_reader).
 :- ensure_loaded(isu_syntax).
 
 
 get_test(Name:Test, TestsPath) :-
-    yaml_read(TestsPath, TestsDict),
+    read_config(TestsPath, TestsDict),
     get_dict(Name, TestsDict, Test),
     get_dict(turns, Test, _).
 

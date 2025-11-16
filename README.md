@@ -2,7 +2,7 @@ BKOS (pronounced _because_) is a dialogue manager for **conversationally explain
 
 # Capabilities
 
-BKOS' conversational capabilities are described in Alexander Berman's PhD thesis in computational linguistics (in preparation).
+BKOS' conversational capabilities are described in Alexander Berman's PhD thesis (in preparation).
 
 # Version
 

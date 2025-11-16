@@ -1,52 +1,4 @@
-selection_policies:
-  select_data_both_relatively_and_exactly: &select_data_both_relatively_and_exactly
-  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
-        include([A]>>(A \= supports(_, _, _)), Valid, Selected))
-
-  select_warrant_triggering_data: &select_warrant_triggering_data
-  - answer_selection_policy(
-      [E, M]>>supports(E, _, M), Valid, Selected,
-      findall(A, (
-        member(A, Valid),
-        (A=rel_value(_,_);
-         A=value(P,_), \+ member(rel_value(P,_), Valid))
-      ), Selected)
-    )
-
-  select_exact_data: &select_exact_data
-  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
-        include([A]>>(A = value(_, _)), Valid, Selected))
-
-  select_warrants: &select_warrants
-  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
-        include([A]>>(A = supports(_, _, _)), Valid, Selected))
-
-  select_1st_datum: &select_1st_datum
-  - answer_selection_policy(
-      [E, M]>>supports(E, C, M), Valid, [A],
-      (
-        member(A, Valid),
-        A \= supports(_, _, _),
-        \+ (
-          A = value(P,_),
-          @responded([E, M]>>supports(E, C, M), Rs),
-          member(rel_value(P, _), Rs)
-        )
-      )
-    )
-  
-  select_1st_warrant: &select_1st_warrant
-  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, [SelectedAnswer],
-      (member(SelectedAnswer, Valid), SelectedAnswer = supports(_, _, _)))
-
-  prefer_non_probabilistic_datum: &prefer_non_probabilistic_datum
-  - answer_selection_policy([E, M]>>supports(E, _, M),
-      Valid,
-      Selected,
-      (member(D, Valid),
-      (D=rel_value(_, _) ; D=value(_,_)) ->
-      Selected = [D]
-      ; Selected = Valid))
+import: ['test/policies.yml']
 
 reusable_facts:
   pat_1_facts: &pat_1_facts
@@ -112,7 +64,7 @@ explain_claim_with_exact_data:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_exact_data
+  inherit: select_exact_data
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -127,7 +79,7 @@ convey_data_both_relatively_and_exactly:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_data_both_relatively_and_exactly
+  inherit: select_data_both_relatively_and_exactly
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -142,7 +94,7 @@ explain_claim_with_relative_datum:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -153,7 +105,7 @@ elaborate_datum_quantitatively:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -166,7 +118,7 @@ warrant_based_explanans:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_warrant
+  inherit: select_1st_warrant
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -177,7 +129,7 @@ deliver_multiple_data_conjunctively:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_warrant_triggering_data
+  inherit: select_warrant_triggering_data
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -192,7 +144,7 @@ deliver_multiple_warrants_conjunctively:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_warrants
+  inherit: select_warrants
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -207,7 +159,7 @@ deliver_explanations_incrementally:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -230,7 +182,7 @@ repeat_incremental_explanation_delivery_when_quested_repeated:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -271,7 +223,7 @@ explain_chained_inference_with_first_valid_datum:
   - supports(rel_prob(satisfied(X), low), not(surgery_recommended(X)), norm)
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>surgery_recommended(pat_1))
   - S: confirm(surgery_recommended(pat_1))
@@ -288,7 +240,7 @@ explain_chained_inference_with_non_probabilistic_datum:
   - supports(rel_prob(satisfied(X), low), not(surgery_recommended(X)), norm)
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *prefer_non_probabilistic_datum
+  inherit: prefer_non_probabilistic_datum
   turns:
   - U: ask([]>>surgery_recommended(pat_1))
   - S: confirm(surgery_recommended(pat_1))
@@ -314,7 +266,7 @@ respond_to_open_request_for_forward_expansion:
   - agenda(respond([X]>>rel_value(back_pain(pat_1), X)))
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - S: assert(rel_value(back_pain(pat_1), low))
   - U: ask([C, M]>>supports(rel_value(back_pain(pat_1), low), C, M))
@@ -334,7 +286,7 @@ provide_evidence_against_claim:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_warrant_triggering_data
+  inherit: select_warrant_triggering_data
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -347,7 +299,7 @@ repeat_exhaustive_answer_for_repeated_question:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -360,7 +312,7 @@ wh_question_concerning_means:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -374,7 +326,7 @@ deliver_prediction_as_inference:
   - agenda(argue(rel_prob(satisfied(pat_1), high)))
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - S: infer(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high))
 
@@ -390,7 +342,7 @@ reject_unanswerable_question_concerning_cause_of_specific_datum:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_datum
+  inherit: select_1st_datum
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
@@ -461,7 +413,7 @@ explain_moderate_estimated_probability_caused_by_moderate_feature_values:
   - rel_value(disability(pat_1), moderate)
   - rel_prob(satisfied(pat_1), moderate)
   - *spinal_stenosis_model_facts
-  - *select_warrant_triggering_data
+  inherit: select_warrant_triggering_data
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: assert(rel_prob(satisfied(pat_1), moderate))
@@ -476,7 +428,7 @@ explain_moderate_estimated_probability_with_contrasting_implications:
   - rel_value(back_pain(pat_1), high)
   - rel_prob(satisfied(pat_1), moderate)
   - *spinal_stenosis_model_facts
-  - *select_warrant_triggering_data
+  inherit: select_warrant_triggering_data
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: assert(rel_prob(satisfied(pat_1), moderate))
@@ -490,7 +442,7 @@ explain_numerical_claim_with_contrasting_implications:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_warrant_triggering_data
+  inherit: select_warrant_triggering_data
   turns:
   - U: ask([X]>>prob(satisfied(pat_1), X))
   - S: assert(prob(satisfied(pat_1), 0.75))
@@ -504,7 +456,7 @@ explain_numerical_claim_with_1st_warrant:
   facts:
   - *pat_1_facts
   - *spinal_stenosis_model_facts
-  - *select_1st_warrant
+  inherit: select_1st_warrant
   turns:
   - U: ask([X]>>prob(satisfied(pat_1), X))
   - S: assert(prob(satisfied(pat_1), 0.75))
