@@ -25,13 +25,12 @@ process_inherit(In, Out) :-
 
 process_inherit(RootIn, In, Out) :-
     is_dict(In),
-    get_dict(inherit, In, ResourceKeyString),
+    get_dict(inherit, In, ResourceKeyStrings),
     !,
-    atom_string(ResourceKey, ResourceKeyString),
-    ( get_dict(ResourceKey, RootIn, Resource) ->
-        merge_dicts(In, Resource, Out)
+    ( is_list(ResourceKeyStrings) ->
+        process_inherited_resources(RootIn, In, ResourceKeyStrings, Out)
     ;
-        throw(error(existence_error(resource, ResourceKey), RootIn))
+        throw(error(type_error(list, ResourceKeyStrings), RootIn))
     ).
 process_inherit(RootIn, In, Out) :-
     is_dict(In),
@@ -41,6 +40,16 @@ process_inherit(RootIn, In, Out) :-
     dict_pairs(Out, Tag, PairsOut).
 process_inherit(_, X, X).
 
+process_inherited_resources(_, X, [], X).
+process_inherited_resources(RootIn, In, [ResourceKeyString|Rest], Out) :-
+    atom_string(ResourceKey, ResourceKeyString),
+    ( get_dict(ResourceKey, RootIn, Resource) ->
+        merge_dicts(In, Resource, Out1),
+        process_inherited_resources(RootIn, Out1, Rest, Out)
+    ;
+        throw(error(existence_error(resource, ResourceKey), RootIn))
+    ).
+
 process_inherit_pairs(_, [], []).
 process_inherit_pairs(RootIn, [Key-In|RestIn], [Key-Out|RestOut]) :-
     process_inherit(RootIn, In, Out),
@@ -49,7 +58,7 @@ process_inherit_pairs(RootIn, [Key-In|RestIn], [Key-Out|RestOut]) :-
 merge_dicts(In1, In2, Out) :-
     dict_pairs(In1, Tag, Pairs1),
     dict_pairs(In2, Tag, Pairs2),
-    merge_pairs(Pairs1, Pairs2, Pairs),
+    merge_pairs(Pairs2, Pairs1, Pairs),
     dict_pairs(Out, Tag, Pairs).
 
 merge_pairs([], _, []).

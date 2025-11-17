@@ -1,55 +1,55 @@
 select_data_both_relatively_and_exactly:
   facts:
-    - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
-          include([A]>>(A \= supports(_, _, _)), Valid, Selected))
+  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
+        include([A]>>(A \= supports(_, _, _)), Valid, Selected))
 
 select_warrant_triggering_data:
   facts:
-    - answer_selection_policy(
-        [E, M]>>supports(E, _, M), Valid, Selected,
-        findall(A, (
-          member(A, Valid),
-          (A=rel_value(_,_);
-            A=value(P,_), \+ member(rel_value(P,_), Valid))
-        ), Selected)
-      )
+  - answer_selection_policy(
+      [E, M]>>supports(E, _, M), Valid, Selected,
+      findall(A, (
+        member(A, Valid),
+        (A=rel_value(_,_);
+          A=value(P,_), \+ member(rel_value(P,_), Valid))
+      ), Selected)
+    )
 
 select_exact_data:
   facts:
-    - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
-          include([A]>>(A = value(_, _)), Valid, Selected))
+  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
+        include([A]>>(A = value(_, _)), Valid, Selected))
 
 select_warrants:
   facts:
-    - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
-          include([A]>>(A = supports(_, _, _)), Valid, Selected))
+  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
+        include([A]>>(A = supports(_, _, _)), Valid, Selected))
 
 select_1st_datum:
   facts:
-    - answer_selection_policy(
-        [E, M]>>supports(E, C, M), Valid, [A],
-        (
-          member(A, Valid),
-          A \= supports(_, _, _),
-          \+ (
-            A = value(P,_),
-            @responded([E, M]>>supports(E, C, M), Rs),
-            member(rel_value(P, _), Rs)
-          )
+  - answer_selection_policy(
+      [E, M]>>supports(E, C, M), Valid, [A],
+      (
+        member(A, Valid),
+        A \= supports(_, _, _),
+        \+ (
+          A = value(P,_),
+          @responded([E, M]>>supports(E, C, M), Rs),
+          member(rel_value(P, _), Rs)
         )
       )
+    )
 
 select_1st_warrant:
   facts:
-    - answer_selection_policy([E, M]>>supports(E, _, M), Valid, [SelectedAnswer],
-        (member(SelectedAnswer, Valid), SelectedAnswer = supports(_, _, _)))
+  - answer_selection_policy([E, M]>>supports(E, _, M), Valid, [SelectedAnswer],
+      (member(SelectedAnswer, Valid), SelectedAnswer = supports(_, _, _)))
 
 prefer_non_probabilistic_datum:
   facts:
-    - answer_selection_policy([E, M]>>supports(E, _, M),
-        Valid,
-        Selected,
-        (member(D, Valid),
-        (D=rel_value(_, _) ; D=value(_,_)) ->
-        Selected = [D]
-        ; Selected = Valid))
+  - answer_selection_policy([E, M]>>supports(E, _, M),
+      Valid,
+      Selected,
+      (member(D, Valid),
+      (D=rel_value(_, _) ; D=value(_,_)) ->
+      Selected = [D]
+      ; Selected = Valid))
