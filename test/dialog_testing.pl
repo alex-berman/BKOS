@@ -6,8 +6,9 @@
 
 
 get_test(Name:Test, TestsPath) :-
-    read_config(TestsPath, TestsDict),
+    read_yaml_config(TestsPath, TestsDict),
     get_dict(Name, TestsDict, Test),
+    is_dict(Test),
     get_dict(turns, Test, _).
 
 

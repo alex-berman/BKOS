@@ -28,8 +28,11 @@ process_inherit(RootIn, In, Out) :-
     get_dict(inherit, In, ResourceKeyString),
     !,
     atom_string(ResourceKey, ResourceKeyString),
-    get_dict(ResourceKey, RootIn, Resource),
-    merge_dicts(In, Resource, Out).
+    ( get_dict(ResourceKey, RootIn, Resource) ->
+        merge_dicts(In, Resource, Out)
+    ;
+        throw(error(existence_error(resource, ResourceKey), RootIn))
+    ).
 process_inherit(RootIn, In, Out) :-
     is_dict(In),
     !,
