@@ -1,12 +1,71 @@
 :- use_module(config_reader).
+:- use_module(library(yaml)).
 
 :- begin_tests(config_reader).
 
-test(basic_config_without_imports) :-
+test(basic_config) :-
     setup_call_cleanup(
-        tmp_file('tmp.yaml', File),
+        tmp_file_stream(Filename, Out, [extension(yml)]),
         (
-            setup_call_cleanup(
-                open(File, write, Out),
-                
-    
+            yaml_write(Out, _{key: value}),
+            close(Out),
+            read_yaml_config(Filename, Actual),
+            !,
+            assertion(Actual.key == "value")
+        ),
+        delete_file(Filename)
+    ).
+
+test(config_with_import) :-
+    setup_call_cleanup(
+        (
+            tmp_file_stream(MainFilename, Main, [extension(yml)]),
+            tmp_file_stream(ResourceFilename, Resource, [extension(yml)])
+        ),
+        (
+            yaml_write(Main, _{main_key: main_value, import: [ResourceFilename]}),
+            yaml_write(Resource, _{resource_key: resource_value}),
+            close(Main),
+            close(Resource),
+            read_yaml_config(MainFilename, Actual), !,
+            assertion(Actual.main_key == "main_value"),
+            assertion(Actual.resource_key == "resource_value")
+        ),
+        (
+            delete_file(MainFilename),
+            delete_file(ResourceFilename)
+        )
+    ).
+
+test(config_with_import_and_inherit) :-
+    setup_call_cleanup(
+        (
+            tmp_file_stream(MainFilename, Main, [extension(yml)]),
+            tmp_file_stream(ResourceFilename, Resource, [extension(yml)])
+        ),
+        (
+            yaml_write(Main, _{
+                import: [ResourceFilename],
+                main_key: _{
+                    inherit: resource,
+                    content: [main_content]
+                }
+
+            }),
+            yaml_write(Resource, _{
+                resource: _{
+                    content: [resource_content]
+                }
+            }),
+            close(Main),
+            close(Resource),
+            read_yaml_config(MainFilename, Actual), !,
+            assertion(Actual.main_key.content == ["main_content", "resource_content"])
+        ),
+        (
+            delete_file(MainFilename),
+            delete_file(ResourceFilename)
+        )
+    ).
+
+:- end_tests(config_reader).
