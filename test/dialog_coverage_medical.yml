@@ -1,0 +1,11 @@
+import: ['test/policies.yml']
+
+ahus_3_1_1:
+  facts:
+  - chest_xray_recommended(pat_1)
+  - supports(rel_prob(oxygen_saturation(X), low), chest_xray_recommended(X), norm)
+  - supports(rel_prob(oxygen_saturation(X), high), not(chest_xray_recommended(X)), norm)
+  - agenda(inform([]>>chest_xray_recommended(pat_1)))
+  turns:
+  # I recommend performing a chest X-ray.
+  - S: assert(chest_xray_recommended(pat_1))

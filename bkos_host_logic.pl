@@ -87,9 +87,11 @@ answer_move(Vars>>supports(E, C, M), As, Move) :-
 	Inferences \== [],
 	normalize(Inferences, Move).
 
-answer_move([]>>P, [P], confirm(P)).
+answer_move([]>>P, [P], confirm(P)) :-
+	@agenda(respond([]>>P)).
 
-answer_move([]>>P, [not(P)], disconfirm(not(P))).
+answer_move([]>>P, [not(P)], disconfirm(not(P))) :-
+	@agenda(respond([]>>P)).
 
 answer_move([]>>P, [rel_prob(P, high)], confirm(rel_prob(P, high))).
 
