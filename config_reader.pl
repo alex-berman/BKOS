@@ -56,20 +56,32 @@ process_inherit_pairs(RootIn, [Key-In|RestIn], [Key-Out|RestOut]) :-
     process_inherit_pairs(RootIn, RestIn, RestOut).
 
 merge_dicts(In1, In2, Out) :-
-    dict_pairs(In1, Tag, Pairs1),
-    dict_pairs(In2, Tag, Pairs2),
-    merge_pairs(Pairs2, Pairs1, Pairs),
-    dict_pairs(Out, Tag, Pairs).
+    findall(Key, get_dict(Key, In1, _), Keys1),
+    findall(Key, get_dict(Key, In2, _), Keys2),
+    union(Keys1, Keys2, Keys),
+    merge_pairs(Keys, In1, In2, PairsMerged),
+    dict_pairs(Out, yaml, PairsMerged).
 
-merge_pairs([], _, []).
-merge_pairs([Key-Value1|Rest1], Pairs2, [Key-Value|Rest]) :-
-    merge_value(Key, Value1, Pairs2, Value),
-    merge_pairs(Rest1, Pairs2, Rest).
+merge_pairs([], _, _, []).
+merge_pairs([Key|RestKeys], In1, In2, [Key-Value|Rest]) :-
+    merge_value(Key, In1, In2, Value),
+    merge_pairs(RestKeys, In1, In2, Rest).
 
-merge_value(Key, Values1, Pairs2, Values) :-
-    is_list(Values1),
-    member(Key-Values2, Pairs2),
-    is_list(Values2),
-    !,
-    append(Values1, Values2, Values).
-merge_value(_, Value, _, Value).
+merge_value(Key, In1, In2, Value) :-
+    ( get_dict(Key, In1, Value1) ->
+        ( get_dict(Key, In2, Value2) ->
+            ( is_list(Value1) ->
+                ( is_list(Value2) ->
+                    append(Value1, Value2, Value)
+                ;
+                    throw(error(type_error(list, Value2), In2))
+                )
+            ;
+                throw(error(type_error(list, Value1), In1))
+            )
+        ;
+            Value = Value1
+        )
+    ;
+        get_dict(Key, In2, Value)
+    ).

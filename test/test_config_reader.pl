@@ -11,7 +11,7 @@ test(basic_config) :-
             close(Out),
             read_yaml_config(Filename, Actual),
             !,
-            assertion(Actual.key == "value")
+            assertion(Actual =@= yaml{key: "value"})
         ),
         delete_file(Filename)
     ).
@@ -28,8 +28,11 @@ test(config_with_import) :-
             close(Main),
             close(Resource),
             read_yaml_config(MainFilename, Actual), !,
-            assertion(Actual.main_key == "main_value"),
-            assertion(Actual.resource_key == "resource_value")
+            assertion(Actual = yaml{
+                import: _,
+                main_key: "main_value",
+                resource_key: "resource_value"
+            })
         ),
         (
             delete_file(MainFilename),
@@ -48,44 +51,35 @@ test(config_with_import_and_inherit) :-
                 import: [ResourceFilename],
                 main_key: _{
                     inherit: [resource],
-                    content: [main_content]
+                    shared_key: [main_content],
+                    main_unique_key: main_unique_value
                 }
 
             }),
             yaml_write(Resource, _{
                 resource: _{
-                    content: [resource_content]
+                    shared_key: [resource_content],
+                    resource_unique_key: resource_unique_value
                 }
             }),
             close(Main),
             close(Resource),
             read_yaml_config(MainFilename, Actual), !,
-            assertion(Actual.main_key.content == ["resource_content", "main_content"])
+            assertion(Actual = yaml{
+                import: _,
+                resource: _,
+                main_key: yaml{
+                    inherit: _,
+                    shared_key: ["main_content", "resource_content"],
+                    resource_unique_key: "resource_unique_value",
+                    main_unique_key: "main_unique_value"
+                }
+            })
         ),
         (
             delete_file(MainFilename),
             delete_file(ResourceFilename)
         )
-    ).
-
-test(inherit_adds_key_if_missing) :-
-    setup_call_cleanup(
-        tmp_file_stream(Filename, Out, [extension(yml)]),
-        (
-            yaml_write(Out, _{
-                resource: _{
-                    content: [resource_content]
-                },
-                key: _{
-                    inherit: [resource]
-                }
-            }),
-            close(Out),
-            read_yaml_config(Filename, Actual),
-            !,
-            assertion(Actual.key.content == ["resource_content"])
-        ),
-        delete_file(Filename)
     ).
 
 :- end_tests(config_reader).
