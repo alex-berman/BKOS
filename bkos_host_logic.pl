@@ -39,6 +39,10 @@ valid_answer([_]>>P, P) :-
 	P \= supports(_, _, _),
 	@P.
 
+valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
+	is_list(Es),
+	forall(member(E, Es), valid_answer([]>>supports(E, C, M), supports(E, C, M))).
+
 
 has_variable_and_body(Vars>>Body, Var, Body) :-
 	member(Var1, Vars),

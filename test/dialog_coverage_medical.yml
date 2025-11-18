@@ -1,6 +1,6 @@
 import: ['test/policies.yml']
 
-ahus_3_1:
+excerpt_3_1_ahus:
   facts:
   - rel_value(medication_duration(pat_1), high)
   - value(has_increased_dosage(pat_1), true)
@@ -15,7 +15,7 @@ ahus_3_1:
   # I suggest switching medication, since you have had your current medication for a relatively long time and have increased dosage and not had any effect.
   - S: infer([rel_value(medication_duration(pat_1), high), value(has_increased_dosage(pat_1), true), value(medication_had_effect(pat_1), false)], change_of_medication_recommended(pat_1))
 
-ahus_3_2_variant_1:
+excerpt_3_2_variant_1_ahus:
   facts:
   - value(oxygen_saturation(pat_1), 0.93)
   - rel_value(oxygen_saturation(pat_1), low)
@@ -41,7 +41,7 @@ ahus_3_2_variant_1:
   # Yes, low oxygen saturation is statistically associated with a high risk of lung abnormality.
   - S: confirm(supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association))
 
-ahus_3_2_variant_2:
+excerpt_3_2_variant_2_ahus:
   facts:
   - value(oxygen_saturation(pat_1), 0.93)
   - rel_value(oxygen_saturation(pat_1), low)
@@ -63,7 +63,7 @@ ahus_3_2_variant_2:
   # The level of oxygen in your blood is relatively low.
   - S: assert(rel_value(oxygen_saturation(pat_1), low))
 
-ahus_3_3_and_3_10:
+excerpt_3_3_and_3_10_ahus:
   facts:
   - has_cancer(pat_1)
   - late_stage_of_disease(pat_1)
@@ -88,3 +88,18 @@ ahus_3_3_and_3_10:
       - signal_resumption
       - assert(supports(late_stage_of_disease(X), not(lung_transplant_feasible(X)), norm))
 
+excerpt_3_4_LA_p17:
+  facts:
+  - rel_value(blood_sugar(pat_1), moderate)
+  - rel_value(cholesterol_levels(pat_1), moderate)
+  - supports(rel_value(blood_sugar(X), moderate), rel_value(overall_health(pat_1), high), association)
+  - supports(rel_value(cholesterol_levels(X), moderate), rel_value(overall_health(pat_1), high), association)
+  - agenda(inform([E, M]>>supports(E, rel_value(overall_health(pat_1), high), M)))
+  inherit: [select_warrant_triggering_data]
+  turns:
+  # Your blood sugar is perfectly normal, and your cholesterol levels are good too.
+  - S: assert([rel_value(blood_sugar(pat_1), moderate), rel_value(cholesterol_levels(pat_1), moderate)])
+  # So I'm fairly healthy for my age?
+  - U: ask([]>>supports([rel_value(blood_sugar(pat_1), moderate), rel_value(cholesterol_levels(pat_1), moderate)], rel_value(overall_health(pat_1), high), _))
+  # Yes, these measurements indicate that you are healthy.
+  - S: confirm(supports([rel_value(blood_sugar(pat_1), moderate), rel_value(cholesterol_levels(pat_1), moderate)], rel_value(overall_health(pat_1), high), _))
