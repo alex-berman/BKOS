@@ -13,7 +13,7 @@ get_test(Name:Test, TestsPath) :-
 
 
 run_test(TestsPath, Name) :-
-    yaml_read(TestsPath, TestsDict),
+    read_yaml_config(TestsPath, TestsDict),
     get_dict(Name, TestsDict, Test),
     run_test_from_dict(Name:Test).
 
@@ -96,9 +96,8 @@ test_user_turn(StateID, TurnDict) :-
     ( get_dict(unresolvable_phrase, TurnDict, Phrase) ->
         db_add(StateID, recognized(unresolvable_phrase(Phrase)))
     ; true ),
-    ( get_dict(move, TurnDict, MoveAtom) ->
-        atom_to_term(MoveAtom, Move, _),
-        db_add(StateID, recognized(move(Move)))
+    ( get_dict(move, TurnDict, Move) ->
+        process_user_move(StateID, Move)
     ; true ),
     ( get_dict(presuppositions, TurnDict, PresuppositionAtoms) ->
         forall(
@@ -108,5 +107,15 @@ test_user_turn(StateID, TurnDict) :-
     ; true ).
 
 test_user_turn(StateID, MoveAtom) :-
+    atom_to_term(MoveAtom, Move, _),
+    db_add(StateID, recognized(move(Move))).
+
+
+process_user_move(StateID, MoveAtoms) :-
+    is_list(MoveAtoms),
+    !,
+    forall(member(MoveAtom, MoveAtoms), process_user_move(StateID, MoveAtom)).
+
+process_user_move(StateID, MoveAtom) :-
     atom_to_term(MoveAtom, Move, _),
     db_add(StateID, recognized(move(Move))).
