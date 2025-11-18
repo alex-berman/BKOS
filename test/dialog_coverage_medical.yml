@@ -15,7 +15,7 @@ excerpt_3_1_ahus:
   # I suggest switching medication, since you have had your current medication for a relatively long time and have increased dosage and not had any effect.
   - S: infer([rel_value(medication_duration(pat_1), high), value(has_increased_dosage(pat_1), true), value(medication_had_effect(pat_1), false)], change_of_medication_recommended(pat_1))
 
-excerpt_3_2_variant_1_ahus:
+excerpt_3_2_ahus_variant_1:
   facts:
   - value(oxygen_saturation(pat_1), 0.93)
   - rel_value(oxygen_saturation(pat_1), low)
@@ -41,7 +41,7 @@ excerpt_3_2_variant_1_ahus:
   # Yes, low oxygen saturation is statistically associated with a high risk of lung abnormality.
   - S: confirm(supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association))
 
-excerpt_3_2_variant_2_ahus:
+excerpt_3_2_ahus_variant_2:
   facts:
   - value(oxygen_saturation(pat_1), 0.93)
   - rel_value(oxygen_saturation(pat_1), low)
@@ -103,3 +103,77 @@ excerpt_3_4_LA_p17:
   - U: ask([]>>supports([rel_value(blood_sugar(pat_1), moderate), rel_value(cholesterol_levels(pat_1), moderate)], rel_value(overall_health(pat_1), high), _))
   # Yes, these measurements indicate that you are healthy.
   - S: confirm(supports([rel_value(blood_sugar(pat_1), moderate), rel_value(cholesterol_levels(pat_1), moderate)], rel_value(overall_health(pat_1), high), _))
+
+excerpt_3_5_LA_p251:
+  facts:
+  - value(cellular_changes_in_bronchoscopy(pat_1), true)
+  - value(has_tumor(pat_1), true)
+  - supports(value(cellular_changes_in_bronchoscopy(X), true), value(has_tumor(X), true), association)
+  - supports(value(has_tumor(X), true), value(has_cancer(X), true), entailment)
+  - agenda(inform([V]>>value(cellular_changes_in_bronchoscopy(pat_1), V)))
+  inherit: [select_1st_datum]
+  turns:
+  # The sample taken during the bronchoscopy showed cellular changes.
+  - S: assert(value(cellular_changes_in_bronchoscopy(pat_1), true))
+  # What does the doctor mean by cellular changes?
+  - U: ask([C, M]>>supports(value(cellular_changes_in_bronchoscopy(pat_1), true), C, M))
+  # It's a tumor.
+  - S: assert(value(has_tumor(pat_1), true))
+  # Does the doctor mean that I have cancer?
+  - U: ask([]>>supports(value(has_tumor(pat_1), true), value(has_cancer(pat_1), true), _))
+  # Yes, the tumor indicates that you have cancer.
+  - S: confirm(supports(value(has_tumor(pat_1), true), value(has_cancer(pat_1), true), entailment))
+
+excerpt_3_6_johannesen_p36:
+  facts:
+    - rel_value(bleeding(pat_1), high)
+    - supports(rel_value(bleeding(X), high), rel_prob(low_hematrocit(X), high), association)
+    - agenda(argue(rel_prob(low_hematrocit(pat_1), high)))
+  inherit: [select_1st_datum]
+  turns:
+  # I think the hematocrit measurement will be low, since the patient has relatively severe bleeding
+  - S: infer(rel_value(bleeding(pat_1), high), rel_prob(low_hematrocit(pat_1), high))
+
+excerpt_3_7_johannesen_p39:
+  facts:
+    - rel_value(urine_darkness(pat_1), high)
+    - supports(rel_value(urine_darkness(X), high), fluid_needed(X), association)
+    - agenda(argue(fluid_needed(pat_1)))
+  inherit: [select_1st_datum]
+  turns:
+  # The patient probably needs some fluid, the patient's urine is pretty dark
+  - S: infer(rel_value(urine_darkness(pat_1), high), fluid_needed(pat_1))
+
+excerpt_3_8_johannesen_p32:
+  facts:
+  - value(blood_pressure(pat_1), 177)
+  - rel_value(blood_pressure(pat_1), high)
+  - supports(rel_value(blood_pressure(X), high), fentanyl_recommended(X), association)
+  - agenda(argue(fentanyl_recommended(pat_1)))
+  inherit: [select_exact_data]
+  turns:
+  # The patient's blood pressure is 177, so administer fentanyl
+  - S: infer(value(blood_pressure(pat_1), 177), fentanyl_recommended(pat_1))
+
+excerpt_3_9_and_3_12_johannesen_p41_variant_o:
+  facts:
+  - oral_intubation_recommended(pat_1)
+  - rel_value(nare_size(pat_1), low)
+  - rel_value(body_size(pat_1), high)
+  - big_tube_needed(pat_1)
+  - supports(rel_value(nare_size(X), low), big_tube_needed(X), causation)
+  - supports(rel_value(body_size(X), high), big_tube_needed(X), causation)
+  - supports(big_tube_needed(X), oral_intubation_recommended(X), association)
+  - agenda(inform([]>>oral_intubation_recommended(pat_1)))
+  inherit: [select_proximate_data]
+  turns:
+  # I suggest oral intubation
+  - S: assert(oral_intubation_recommended(pat_1))
+  # Why?
+  - U: ask([E, M]>>supports(E, oral_intubation_recommended(pat_1), M))
+  # The patient needs a big tube
+  - S: assert(big_tube_needed(pat_1))
+  # Why do you think so?
+  - U: ask([E, M]>>supports(E, big_tube_needed(pat_1), M))
+  # The patient has small nares and a big body
+  - S: assert([rel_value(nare_size(pat_1), low), rel_value(body_size(pat_1), high)])
