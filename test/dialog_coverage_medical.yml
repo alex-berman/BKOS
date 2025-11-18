@@ -1,11 +1,90 @@
 import: ['test/policies.yml']
 
-ahus_3_1_1:
+ahus_3_1:
   facts:
+  - rel_value(medication_duration(pat_1), high)
+  - value(has_increased_dosage(pat_1), true)
+  - value(medication_had_effect(pat_1), false)
+  - change_of_medication_recommended(pat_1)
+  - supports(rel_value(medication_duration(X), high), change_of_medication_recommended(X), association)
+  - supports(value(has_increased_dosage(X), true), change_of_medication_recommended(X), association)
+  - supports(value(medication_had_effect(X), false), change_of_medication_recommended(X), association)
+  - agenda(argue(change_of_medication_recommended(pat_1)))
+  inherit: [select_warrant_triggering_data]
+  turns:
+  # I suggest switching medication, since you have had your current medication for a relatively long time and have increased dosage and not had any effect.
+  - S: infer([rel_value(medication_duration(pat_1), high), value(has_increased_dosage(pat_1), true), value(medication_had_effect(pat_1), false)], change_of_medication_recommended(pat_1))
+
+ahus_3_2_variant_1:
+  facts:
+  - value(oxygen_saturation(pat_1), 0.93)
+  - rel_value(oxygen_saturation(pat_1), low)
+  - rel_prob(lung_abnormality(pat_1), high)
   - chest_xray_recommended(pat_1)
-  - supports(rel_prob(oxygen_saturation(X), low), chest_xray_recommended(X), norm)
-  - supports(rel_prob(oxygen_saturation(X), high), not(chest_xray_recommended(X)), norm)
+  - supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association)
+  - supports(rel_prob(lung_abnormality(X), high), chest_xray_recommended(X), norm)
   - agenda(inform([]>>chest_xray_recommended(pat_1)))
+  inherit: [prefer_non_probabilistic_datum]
   turns:
   # I recommend performing a chest X-ray.
   - S: assert(chest_xray_recommended(pat_1))
+  # why is that?
+  - U: ask([E, M]>>supports(E, chest_xray_recommended(pat_1), M))
+  # The level of oxygen in your blood is relatively low.
+  - S: assert(rel_value(oxygen_saturation(pat_1), low))
+  # oh? how high is it?
+  - U: ask([V]>>value(oxygen_saturation(pat_1), V))
+  # It's at ninety-three percent.
+  - S: assert(value(oxygen_saturation(pat_1), 0.93))
+  # could a too low oxygen uptake indicate that lung function is poor?
+  - U: ask([]>>supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), _))
+  # Yes, low oxygen saturation is statistically associated with a high risk of lung abnormality.
+  - S: confirm(supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association))
+
+ahus_3_2_variant_2:
+  facts:
+  - value(oxygen_saturation(pat_1), 0.93)
+  - rel_value(oxygen_saturation(pat_1), low)
+  - rel_prob(lung_abnormality(pat_1), high)
+  - chest_xray_recommended(pat_1)
+  - supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association)
+  - supports(rel_prob(lung_abnormality(X), high), chest_xray_recommended(X), norm)
+  - agenda(inform([]>>chest_xray_recommended(pat_1)))
+  inherit: [select_1st_datum]
+  turns:
+  # I recommend performing a chest X-ray.
+  - S: assert(chest_xray_recommended(pat_1))
+  # why is that?
+  - U: ask([E, M]>>supports(E, chest_xray_recommended(pat_1), M))
+  # I suspect that an X-ray might reveal something abnormal.
+  - S: assert(rel_prob(lung_abnormality(pat_1), high))
+  # why do you think so?
+  - U: ask([E, M]>>supports(E, rel_prob(lung_abnormality(pat_1), high), M))
+  # The level of oxygen in your blood is relatively low.
+  - S: assert(rel_value(oxygen_saturation(pat_1), low))
+
+ahus_3_3_and_3_10:
+  facts:
+  - has_cancer(pat_1)
+  - late_stage_of_disease(pat_1)
+  - not(lung_transplant_feasible(pat_1))
+  - supports(has_cancer(X), not(lung_transplant_feasible(X)), norm)
+  - supports(late_stage_of_disease(X), not(lung_transplant_feasible(X)), norm)
+  inherit: [select_1st_warrant]
+  turns:
+  # do you think I can have these lungs replaced?
+  - U: ask([]>>lung_transplant_feasible(pat_1))
+  # No, a lung transplant isn't feasible in your case.
+  - S: disconfirm(not(lung_transplant_feasible(pat_1)))
+  # why not?
+  - U: ask([E, M]>>supports(E, not(lung_transplant_feasible(pat_1)), M))
+  # Lung transplants are not feasible in the case of cancer.
+  - S: assert(supports(has_cancer(X), not(lung_transplant_feasible(X)), norm))
+  # mm
+  - U: icm(acceptance, positive)
+  # Also, lung transplants are not feasible in later stages of a disease.
+  - S:
+      move:
+      - signal_resumption
+      - assert(supports(late_stage_of_disease(X), not(lung_transplant_feasible(X)), norm))
+
