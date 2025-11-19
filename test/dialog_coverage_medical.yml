@@ -180,12 +180,14 @@ excerpt_3_9_and_3_12_johannesen_p41_variant_o:
 
 excerpt_3_9_and_3_12_johannesen_p41_variant_n:
   facts:
-  - recommended_intubation_type(pat_1, nasal)
-  - required_sedation_for_intubation_type(nasal, low)
+  - nasal_intubation_recommended(pat_1)
   - rel_value(airway_size(pat_1), high)
-  - agenda(inform([T]>>recommended_intubation_type(pat_1, T)))
-  inherit: [select_proximate_data]
+  - supports(rel_value(airway_size(X), high), oral_intubation_recommended(X), association)
+  - agenda(inform([]>>nasal_intubation_recommended(pat_1)))
   turns:
   # I suggest nasal intubation
-  - S: assert(recommended_intubation_type(pat_1, nasal))
-  # TODO: continue
+  - S: assert(nasal_intubation_recommended(pat_1))
+  # Does the patient's big airway point towards going oral?
+  - U: ask([]>>supports(rel_value(airway_size(pat_1), high), oral_intubation_recommended(X), _))
+  # Yes, the patient's big airway is a reason for choosing oral intubation.
+  - S: confirm(supports(rel_value(airway_size(pat_1), high), oral_intubation_recommended(pat_1), association))
