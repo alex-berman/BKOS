@@ -59,6 +59,7 @@ d3:
   # So there were no specific answers in the test that led to these results? For instance my slight disliking of death metal.
   - U:
       unresolvable_phrase: death metal
+  # Sorry, I don't know what "death metal" refers to in this context.
   - S: icm(understanding, negative, unresolvable_phrase("death metal"))
 
 d8:
