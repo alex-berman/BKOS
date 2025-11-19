@@ -139,3 +139,27 @@ d13:
   - U: ask([]>>supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(open(X), high), causation))
   # I don't have any information about that.
   - S: icm(acceptance, negative, lack_knowledge)
+
+d15:
+  facts:
+  - rel_value(pref_for_acoustic_music(respondent), high)
+  - rel_prob(open(respondent), high)
+  inherit: [model, select_warrant_triggering_data]
+  turns:
+  # How do I rate on openness?
+  - U: ask([R]>>rel_prob(open(respondent), R))
+  # I think you score high on openness.
+  - S: assert(rel_prob(open(respondent), high))
+  # Oh wow, why? :)
+  - U: ask([E, M]>>supports(E, rel_prob(open(respondent), high), M))
+  # You seem to prefer acoustic music.
+  - S: assert(rel_value(pref_for_acoustic_music(respondent), high))
+  # did the AI pick up on one of the songs in particular?
+  - U: ask([T]>>supports(rating(T, respondent, _), rel_prob(open(respondent), high), _))
+  # I don't have any information about that.
+  - S: icm(acceptance, negative, lack_knowledge)
+  # do you think death metal fans are 5 or -5 in neuroticism?
+  - U:
+      unresolvable_phrase: death metal
+  # Sorry, I don't know what "death metal" refers to in this context.
+  - S: icm(understanding, negative, unresolvable_phrase("death metal"))
