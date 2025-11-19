@@ -177,3 +177,15 @@ excerpt_3_9_and_3_12_johannesen_p41_variant_o:
   - U: ask([E, M]>>supports(E, big_tube_needed(pat_1), M))
   # The patient has small nares and a big body
   - S: assert([rel_value(nare_size(pat_1), low), rel_value(body_size(pat_1), high)])
+
+excerpt_3_9_and_3_12_johannesen_p41_variant_n:
+  facts:
+  - recommended_intubation_type(pat_1, nasal)
+  - required_sedation_for_intubation_type(nasal, low)
+  - rel_value(airway_size(pat_1), high)
+  - agenda(inform([T]>>recommended_intubation_type(pat_1, T)))
+  inherit: [select_proximate_data]
+  turns:
+  # I suggest nasal intubation
+  - S: assert(recommended_intubation_type(pat_1, nasal))
+  # TODO: continue
