@@ -60,3 +60,10 @@ select_proximate_data:
       Valid,
       Selected,
       include([A]>>(@supports(A, C, _), @A), Valid, Selected))
+
+exclude_warrants_concerning_moderate_predictions:
+  facts:
+  - answer_selection_policy([E, M]>>supports(E, C, M),
+      Valid,
+      Selected,
+      include([A]>>(A \= supports(_, rel_prob(_, moderate), _)), Valid, Selected))

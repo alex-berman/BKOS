@@ -1,0 +1,140 @@
+import: ['test/policies.yml']
+
+model:
+  facts:
+  - supports(rel_value(pref_for_loud_music(X), low), rel_prob(open(X), high), association)
+  - supports(rel_value(pref_for_high_energy_music(X), low), rel_prob(open(X), high), association)
+  - supports(rel_value(pref_for_fast_music(X), low), rel_prob(open(X), high), association)
+  - supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(open(X), high), association)
+  - supports(rel_value(pref_for_fast_music(X), low), rel_prob(extraverted(X), low), association)
+  - supports(rel_value(pref_for_danceable_music(X), moderate), rel_prob(extraverted(X), moderate), association)
+  - supports(rel_value(pref_for_live_music(X), moderate), rel_prob(extraverted(X), moderate), association)
+  - supports(rel_value(pref_for_acoustic_music(X), low), rel_prob(agreeable(X), low), association)
+  - supports(rel_value(pref_for_live_music(X), low), rel_prob(agreeable(X), low), association)
+
+d2:
+  facts:
+  - rel_value(pref_for_loud_music(respondent), low)
+  - rel_value(pref_for_high_energy_music(respondent), low)
+  - rel_value(pref_for_fast_music(respondent), low)
+  - rel_prob(open(respondent), high)
+  - rel_prob(extraverted(respondent), low)
+  inherit: [model, select_warrant_triggering_data]
+  turns:
+  # What was the result for openness?
+  - U: ask([R]>>rel_prob(open(respondent), R))
+  # I think you score quite high on openness.
+  - S: assert(rel_prob(open(respondent), high))
+  # Why do you think I score high on openness?
+  - U: ask([E, M]>>supports(E, rel_prob(open(respondent), high), M))
+  # You seem to prefer silent, low-energy and low-tempo music.
+  - S: assert([rel_value(pref_for_loud_music(respondent), low), rel_value(pref_for_high_energy_music(respondent), low), rel_value(pref_for_fast_music(respondent), low)])
+  # How about extraversion?
+  - U: ask([R]>>rel_prob(extraverted(respondent), R))
+  # I think you score low on extraversion.
+  - S: assert(rel_prob(extraverted(respondent), low))
+  # Could the result be because of a preference of music with lower tempo?
+  - U: ask([]>>supports(rel_value(pref_for_fast_music(respondent), low), rel_prob(extraverted(respondent), low), _))
+  # Yes, your preference for low-tempo music supports the assessment that you score low on extraversion.
+  - S: confirm(supports(rel_value(pref_for_fast_music(respondent), low), rel_prob(extraverted(respondent), low), association))
+
+d3:
+  facts:
+  - rel_value(pref_for_acoustic_music(respondent), low)
+  - rel_prob(agreeable(respondent), low)
+  inherit: [model, select_1st_datum]
+  turns:
+  # What do you think regarding my agreeableness?
+  - U: ask([R]>>rel_prob(agreeable(respondent), R))
+  # I think you rate quite low on agreeableness.
+  - S: assert(rel_prob(agreeable(respondent), low))
+  # What do you base this on?
+  - U: ask([E, M]>>supports(E, rel_prob(agreeable(respondent), low), M))
+  # You seem to prefer non-acoustic music.
+  - S: assert(rel_value(pref_for_acoustic_music(respondent), low))
+  # Ok. Among my answers, which ones tilted me the most towards being non-agreeable?
+  - U: ask([T]>>supports(rating(T, respondent, _), rel_prob(agreeable(respondent), low), _))
+  # I don't have any information about that.
+  - S: icm(acceptance, negative, lack_knowledge)
+  # So there were no specific answers in the test that led to these results? For instance my slight disliking of death metal.
+  - U:
+      unresolvable_phrase: death metal
+  - S: icm(understanding, negative, unresolvable_phrase("death metal"))
+
+d8:
+  facts:
+  - rel_value(pref_for_live_music(respondent), low)
+  - rel_value(pref_for_loud_music(respondent), low)
+  - rel_prob(agreeable(respondent), low)
+  inherit: [model, select_1st_datum]
+  turns:
+  # How do you think I score on agreeableness?
+  - U: ask([R]>>rel_prob(agreeable(respondent), R))
+  # I think you rate low on agreeableness.
+  - S: assert(rel_prob(agreeable(respondent), low))
+  # Why do you think I'm a disagreeable person?
+  - U: ask([E, M]>>supports(E, rel_prob(agreeable(respondent), low), M))
+  # You seem to prefer non-live music.
+  - S: assert(rel_value(pref_for_live_music(respondent), low))
+  # Hmm that makes sense. Is the low agreeableness based on a preference for loud music?
+  - U:
+      move: ask([]>>supports(rel_value(pref_for_loud_music(respondent), high), rel_prob(agreeable(respondent), low), _))
+      presuppositions:
+      - rel_value(pref_for_loud_music(respondent), high)
+  # No, you seem to prefer silent music.
+  - S: icm(acceptance, negative, not(rel_value(pref_for_loud_music(respondent), high)))
+
+d10:
+  facts:
+  - rel_prob(neurotic(respondent), low)
+  turns:
+  # How do you think I score on neuroticism?
+  - U: ask([R]>>rel_prob(neurotic(respondent), R))
+  # I think you rate quite low on neuroticism.
+  - S: assert(rel_prob(neurotic(respondent), low))
+  # Why am i neurotisk 
+  - U:
+      move: ask([E, M]>>supports(E, rel_prob(neurotic(respondent), high), M))
+      presuppositions:
+      - rel_prob(neurotic(respondent), high)
+  # No, I don't think you score high on neuroticism.
+  - S: icm(acceptance, negative, not(rel_prob(neurotic(respondent), high)))
+
+d13:
+  facts:
+  - rel_value(pref_for_acoustic_music(respondent), high)
+  - rel_value(pref_for_danceable_music(respondent), moderate)
+  - rel_value(pref_for_live_music(respondent), moderate)
+  - rel_prob(open(respondent), high)
+  - rel_prob(extraverted(respondent), moderate)
+  inherit: [model, exclude_warrants_concerning_moderate_predictions]
+  turns:
+  # How do you think I rate on openness?
+  - U: ask([R]>>rel_prob(open(respondent), R))
+  # I I think you rate high on openness.
+  - S: assert(rel_prob(open(respondent), high))
+  # It's interesting, I wonder what rating would give this assessment
+  - U: ask([T]>>supports(rating(T, respondent, _), rel_prob(open(respondent), high), _))
+  # I don't have any information about that.
+  - S: icm(acceptance, negative, lack_knowledge)
+  # OK, so what is the assessment based on?
+  - U: ask([E, M]>>supports(E, rel_prob(open(respondent), high), M))
+  # You seem to prefer acoustic music, and I associate a preference for acoustic music with rating high on openness.
+  - S: assert([rel_value(pref_for_acoustic_music(respondent), high), supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(open(X), high), association)])
+  # What about extraversion?
+  - U: ask([R]>>rel_prob(extraverted(respondent), R))
+  # I think you score average on extraversion.
+  - S: assert(rel_prob(extraverted(respondent), moderate))
+  # Do you know the link with music features?
+  - U: ask([E, M]>>supports(E, rel_prob(extraverted(respondent), moderate), M))
+  # Your preferences regarding danceability and liveliness don't indicate strongly one way or another
+  - S: assert([rel_value(pref_for_danceable_music(respondent), moderate), rel_value(pref_for_live_music(respondent), moderate)])
+  # What factor would the water song be related to?
+  - U:
+      unresolvable_phrase: water song
+  # Sorry, I don't know what "water song" refers to in this context.
+  - S: icm(understanding, negative, unresolvable_phrase("water song"))
+  # I wonder if a preference for acoustic music influences openness or if it's only the other way
+  - U: ask([]>>supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(open(X), high), causation))
+  # I don't have any information about that.
+  - S: icm(acceptance, negative, lack_knowledge)
