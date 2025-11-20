@@ -18,11 +18,19 @@ model:
   - supports(rel_value(pref_for_danceable_music(X), moderate), rel_prob(extraverted(X), moderate), association)
   - supports(rel_value(pref_for_live_music(X), moderate), rel_prob(extraverted(X), moderate), association)
   # agreeableness
+  - supports(rel_value(pref_for_instrumental_music(X), low), rel_prob(agreeable(X), high), association)
+  - supports(rel_value(pref_for_live_music(X), low), rel_prob(agreeable(X), high), association)
+  - supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(agreeable(X), high), association)
   - supports(rel_value(pref_for_acoustic_music(X), low), rel_prob(agreeable(X), low), association)
-  - supports(rel_value(pref_for_live_music(X), low), rel_prob(agreeable(X), low), association)
+  - supports(rel_value(pref_for_live_music(X), high), rel_prob(agreeable(X), low), association)
+  - supports(rel_value(pref_for_major_mode(X), low), rel_prob(agreeable(X), low), association)
+  - supports(rel_value(pref_for_instrumental_music(X), high), rel_prob(agreeable(X), low), association)
   # conscientousness
   - supports(rel_value(pref_for_live_music(X), low), rel_prob(conscientous(X), high), association)
   - supports(rel_value(pref_for_speechiness(X), high), rel_prob(conscientous(X), high), association)
+  # neuroticism
+  - supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(neurotic(X), low), association)
+  - supports(rel_value(pref_for_high_energy_music(X), high), rel_prob(neurotic(X), low), association)
 
 d2:
   facts:
@@ -76,10 +84,13 @@ d3:
 
 d8:
   facts:
-  - rel_value(pref_for_live_music(respondent), low)
+  - rel_value(pref_for_live_music(respondent), high)
   - rel_value(pref_for_loud_music(respondent), low)
+  - rel_value(pref_for_instrumental_music(respondent), high)
+  - rel_value(pref_for_acoustic_music(respondent), high)
+  - rel_value(pref_for_major_mode(respondent), low)
   - rel_prob(agreeable(respondent), low)
-  inherit: [model, select_1st_datum]
+  inherit: [model, select_warrants]
   turns:
   # How do you think I score on agreeableness?
   - U: ask([R]>>rel_prob(agreeable(respondent), R))
@@ -87,9 +98,9 @@ d8:
   - S: assert(rel_prob(agreeable(respondent), low))
   # Why do you think I'm a disagreeable person?
   - U: ask([E, M]>>supports(E, rel_prob(agreeable(respondent), low), M))
-  # You seem to prefer non-live music.
-  - S: assert(rel_value(pref_for_live_music(respondent), low))
-  # Hmm that makes sense. Is the low agreeableness based on a preference for loud music?
+  # I associate a preference for live music, music in major mode and instrumental music with being disagreeable.
+  - S: assert([supports(rel_value(pref_for_live_music(X1), high), rel_prob(agreeable(X1), low), association), supports(rel_value(pref_for_major_mode(X2), low), rel_prob(agreeable(X2), low), association), supports(rel_value(pref_for_instrumental_music(X3), high), rel_prob(agreeable(X3), low), association)])
+  # Is the low agreeableness based on a preference for loud music?
   - U:
       move: ask([]>>supports(rel_value(pref_for_loud_music(respondent), high), rel_prob(agreeable(respondent), low), _))
       presuppositions:
@@ -185,6 +196,7 @@ d19:
   - rel_value(pref_for_danceable_music(respondent), low)
   - rel_value(pref_for_speechiness(respondent), high)
   - rel_value(pref_for_high_valence_music(respondent), low)
+  - rel_value(pref_for_acoustic_music(respondent), high)
   - rel_prob(open(respondent), low)
   - rel_prob(neurotic(respondent), low)
   - rel_prob(extraverted(respondent), moderate)
@@ -230,3 +242,36 @@ d19:
       move:
       - infer(rel_value(pref_for_speechiness(respondent), high), rel_prob(extraverted(respondent), high))
       - infer([rel_value(pref_for_high_valence_music(respondent), low), rel_value(pref_for_instrumental_music(respondent), low), rel_value(pref_for_danceable_music(respondent), low)], rel_prob(extraverted(respondent), low))
+  # yes, this sounds about right
+  - U: icm(acceptance, positive)
+  - S: {}
+  # Why do I rate high on agreeableness?
+  - U: ask([E, M]>>supports(E, rel_prob(agreeable(respondent), high), M))
+  # You prefer non-instrumental music, non-live music, and acoustic music 
+  - S: assert([rel_value(pref_for_instrumental_music(respondent), low), rel_value(pref_for_live_music(respondent), low), rel_value(pref_for_acoustic_music(respondent), high)])
+  # i see now
+  - U: icm(acceptance, positive)
+  - S: {}
+  # And why do I rate low on neuroticism?
+  - U: ask([E, M]>>supports(E, rel_prob(neurotic(respondent), low), M))
+  # You disprefer acoustic, high-energy music
+  - S: assert([rel_value(pref_for_acoustic_music(respondent), high), rel_value(pref_for_high_energy_music(respondent), high)])
+
+d34:
+  facts:
+  - rel_prob(open(respondent), high)
+  - rel_prob(neurotic(respondent), low)
+  turns:
+  # How do I rate on openness?
+  - U: ask([R]>>rel_prob(open(respondent), R))
+  # I think you rate high on openness.
+  - S: assert(rel_prob(open(respondent), high))
+  # How about neuroticism?
+  - U: ask([R]>>rel_prob(neurotic(respondent), R))
+  # I think you rate low on neuroticism.
+  - S: assert(rel_prob(neurotic(respondent), low))
+  # oh, is this because I don't like growling?
+  - U:
+      unresolvable_phrase: growling
+  # Sorry, I don't know what "growling" refers to in this context.
+  - S: icm(understanding, negative, unresolvable_phrase("growling"))
