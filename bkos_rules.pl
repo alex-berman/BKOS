@@ -52,6 +52,7 @@ resume_responding :: [
 		\+ (@responded(Q, Ps), member(P, Ps))
 	), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
+	$(SelectedAnswers \== []),
 	$answer_move(Q, SelectedAnswers, Move)
 	] -* [
 		utter([signal_resumption, Move]),

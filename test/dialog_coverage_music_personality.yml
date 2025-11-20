@@ -2,15 +2,23 @@ import: ['test/policies.yml']
 
 model:
   facts:
+  # openness
   - supports(rel_value(pref_for_loud_music(X), low), rel_prob(open(X), high), association)
   - supports(rel_value(pref_for_high_energy_music(X), low), rel_prob(open(X), high), association)
+  - supports(rel_value(pref_for_high_energy_music(X), high), rel_prob(open(X), low), association)
+  - supports(rel_value(pref_for_loud_music(X), high), rel_prob(open(X), low), association)
   - supports(rel_value(pref_for_fast_music(X), low), rel_prob(open(X), high), association)
   - supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(open(X), high), association)
+  # extraversion
   - supports(rel_value(pref_for_fast_music(X), low), rel_prob(extraverted(X), low), association)
   - supports(rel_value(pref_for_danceable_music(X), moderate), rel_prob(extraverted(X), moderate), association)
   - supports(rel_value(pref_for_live_music(X), moderate), rel_prob(extraverted(X), moderate), association)
+  # agreeableness
   - supports(rel_value(pref_for_acoustic_music(X), low), rel_prob(agreeable(X), low), association)
   - supports(rel_value(pref_for_live_music(X), low), rel_prob(agreeable(X), low), association)
+  # conscientousness
+  - supports(rel_value(pref_for_live_music(X), low), rel_prob(conscientous(X), high), association)
+  - supports(rel_value(pref_for_speechiness(X), high), rel_prob(conscientous(X), high), association)
 
 d2:
   facts:
@@ -163,3 +171,48 @@ d15:
       unresolvable_phrase: death metal
   # Sorry, I don't know what "death metal" refers to in this context.
   - S: icm(understanding, negative, unresolvable_phrase("death metal"))
+
+d19:
+  facts:
+  - rel_value(pref_for_high_energy_music(respondent), high)
+  - rel_value(pref_for_loud_music(respondent), high)
+  - rel_value(pref_for_live_music(respondent), low)
+  - rel_value(pref_for_speechiness(respondent), high)
+  - rel_prob(open(respondent), low)
+  - rel_prob(neurotic(respondent), low)
+  - rel_prob(extraverted(respondent), low)
+  - rel_prob(conscientous(respondent), high)
+  - rel_prob(agreeable(respondent), high)
+  inherit: [model, select_warrant_triggering_data]
+  turns:
+  # How do I rate on openness?
+  - U: ask([R]>>rel_prob(open(respondent), R))
+  # I think you rate low on openness.
+  - S: assert(rel_prob(open(respondent), low))
+  # Neuroticism?
+  - U: ask([R]>>rel_prob(neurotic(respondent), R))
+  # I think you rate low on neuroticism.
+  - S: assert(rel_prob(neurotic(respondent), low))
+  # Extraversion?
+  - U: ask([R]>>rel_prob(extraverted(respondent), R))
+  # I think you rate low on extraversion.
+  - S: assert(rel_prob(extraverted(respondent), low))
+  # Conscientousness?
+  - U: ask([R]>>rel_prob(conscientous(respondent), R))
+  # I think you rate high on conscientousness.
+  - S: assert(rel_prob(conscientous(respondent), high))
+  # Agreeableness?
+  - U: ask([R]>>rel_prob(agreeable(respondent), R))
+  # I think you rate high on agreeableness.
+  - S: assert(rel_prob(agreeable(respondent), high))
+  # I really want to know what the result is based on...why am I so low on openness? kind of disagree with that
+  - U: ask([E, M]>>supports(E, rel_prob(open(respondent), low), M))
+  # You seem to prefer high-energy, loud music.
+  - S: assert([rel_value(pref_for_high_energy_music(respondent), high), rel_value(pref_for_loud_music(respondent), high)])
+  # ok, I see
+  - U: icm(acceptance, positive)
+  - S: {}
+  # What was the score for conscientousness based on?
+  - U: ask([E, M]>>supports(E, rel_prob(conscientous(respondent), high), M))
+  # You prefer non-live music and music with spoken words
+  - S: assert([rel_value(pref_for_live_music(respondent), low), rel_value(pref_for_speechiness(respondent), high)])
