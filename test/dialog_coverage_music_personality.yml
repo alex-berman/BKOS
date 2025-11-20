@@ -10,6 +10,10 @@ model:
   - supports(rel_value(pref_for_fast_music(X), low), rel_prob(open(X), high), association)
   - supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(open(X), high), association)
   # extraversion
+  - supports(rel_value(pref_for_speechiness(X), high), rel_prob(extraverted(X), high), association)
+  - supports(rel_value(pref_for_high_valence_music(X), low), rel_prob(extraverted(X), low), association)
+  - supports(rel_value(pref_for_instrumental_music(X), low), rel_prob(extraverted(X), low), association)
+  - supports(rel_value(pref_for_danceable_music(X), low), rel_prob(extraverted(X), low), association)
   - supports(rel_value(pref_for_fast_music(X), low), rel_prob(extraverted(X), low), association)
   - supports(rel_value(pref_for_danceable_music(X), moderate), rel_prob(extraverted(X), moderate), association)
   - supports(rel_value(pref_for_live_music(X), moderate), rel_prob(extraverted(X), moderate), association)
@@ -177,10 +181,13 @@ d19:
   - rel_value(pref_for_high_energy_music(respondent), high)
   - rel_value(pref_for_loud_music(respondent), high)
   - rel_value(pref_for_live_music(respondent), low)
+  - rel_value(pref_for_instrumental_music(respondent), low)
+  - rel_value(pref_for_danceable_music(respondent), low)
   - rel_value(pref_for_speechiness(respondent), high)
+  - rel_value(pref_for_high_valence_music(respondent), low)
   - rel_prob(open(respondent), low)
   - rel_prob(neurotic(respondent), low)
-  - rel_prob(extraverted(respondent), low)
+  - rel_prob(extraverted(respondent), moderate)
   - rel_prob(conscientous(respondent), high)
   - rel_prob(agreeable(respondent), high)
   inherit: [model, select_warrant_triggering_data]
@@ -195,8 +202,8 @@ d19:
   - S: assert(rel_prob(neurotic(respondent), low))
   # Extraversion?
   - U: ask([R]>>rel_prob(extraverted(respondent), R))
-  # I think you rate low on extraversion.
-  - S: assert(rel_prob(extraverted(respondent), low))
+  # You rate moderately on extraversion.
+  - S: assert(rel_prob(extraverted(respondent), moderate))
   # Conscientousness?
   - U: ask([R]>>rel_prob(conscientous(respondent), R))
   # I think you rate high on conscientousness.
@@ -216,3 +223,10 @@ d19:
   - U: ask([E, M]>>supports(E, rel_prob(conscientous(respondent), high), M))
   # You prefer non-live music and music with spoken words
   - S: assert([rel_value(pref_for_live_music(respondent), low), rel_value(pref_for_speechiness(respondent), high)])
+  # How about extraversion?
+  - U: ask([E, M]>>supports(E, rel_prob(extraverted(respondent), moderate), M))
+  # The fact that you prefer music with spoken words indicates that you are extraverted, while the fact that you prefer sad/depressed/angry music, non-instrument music, non-danceable music  indicates that you are introverted
+  - S:
+      move:
+      - infer(rel_value(pref_for_speechiness(respondent), high), rel_prob(extraverted(respondent), high))
+      - infer([rel_value(pref_for_high_valence_music(respondent), low), rel_value(pref_for_instrumental_music(respondent), low), rel_value(pref_for_danceable_music(respondent), low)], rel_prob(extraverted(respondent), low))
