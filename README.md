@@ -1,21 +1,20 @@
 BKOS (pronounced _because_) is a dialogue manager for **conversationally explainable AI (XAI) interfaces**, informed by theories of human argumentation, rhetoric and dialogue, and by empirical analyses of human explanatory dialogues. In BKOS, explanations are conceived as arguments for claims, and the structure of those arguments is extracted from information (so called coefficients) learned by the statistical model.
 
 # Capabilities
-
 BKOS' conversational capabilities are described in Alexander Berman's PhD thesis (in preparation).
 
-# Version
-
-This repository contains BKOS version 2, implemented in SWI Prolog. Note that there is a [previous version of BKOS](https://github.com/alex-berman/BKOS), implemented in Python.
-
-
-# Running the system
-
-There is currently no interactive version of the system. However, [dialogue coverage tests](test/dialog_coverage_spinal_stenosis.yml) can be validated by running
+# Validating system behaviour
+There is currently no interactive version of the system. However, dialogue coverage tests can be validated by running the test suite:
 
 ```
 swipl -g run_tests -t halt test/test_bkos.pl
 ```
+
+The contents of the test suite corresponding to different studies in the thesis:
+
+- Study I: [dialog_coverage_medical.yml](test/dialog_coverage_medical.yml)
+- Study II: [dialog_coverage_music_personality.yml](test/dialog_coverage_music_personality.yml)
+- Study IV: [dialog_coverage_spinal_stenosis.yml](test/dialog_coverage_spinal_stenosis.yml)
 
 # Debugging and tracing with coverage testing
 SWI Prolog's support for debugging and tracing can be useful when troubleshooting test failures. If we assume that the test named `explain_claim_with_exact_data` is failing and we want to understand why, we can, e.g. insert a `trace` invocation somethere in the code, and then run the test as follows:
@@ -25,6 +24,9 @@ swipl -g "run_test('test/dialog_coverage_spinal_stenosis.yml', explain_claim_wit
 ```
 
 This will execute the selected test until the trace point is encountered.
+
+# Version
+This repository contains BKOS version 2, implemented in SWI Prolog. Note that there is a [previous version of BKOS](https://github.com/alex-berman/BKOS), implemented in Python.
 
 # Contact
 For correspondence, contact alexander.berman@gu.se
