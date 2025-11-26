@@ -51,3 +51,6 @@ facts:
       )
     )
   )
+
+# agenda
+- agenda(respond([X]>>rel_prob(satisfied(pat_1), X)))
