@@ -32,6 +32,13 @@ model:
   - supports(rel_value(pref_for_acoustic_music(X), high), rel_prob(neurotic(X), low), association)
   - supports(rel_value(pref_for_high_energy_music(X), high), rel_prob(neurotic(X), low), association)
 
+term_definitions:
+  facts:
+  - definition(open, "Openness to experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people.")
+  - definition(agreeable, "Agreeableness reflects individual differences in concern with cooperation and social harmony. Agreeable individuals value getting along with others.")
+  - definition(extraverted, "Extraversion is marked by pronounced engagement with the external world. Extraverts enjoy being with people, are full of energy, and often experience positive emotions.")
+  - definition(neurotic, "Neuroticism refers to the tendency to experience negative feelings such as anxiety, anger, or depression.")
+
 d2:
   facts:
   - rel_value(pref_for_loud_music(respondent), low)
@@ -39,12 +46,16 @@ d2:
   - rel_value(pref_for_fast_music(respondent), low)
   - rel_prob(open(respondent), high)
   - rel_prob(extraverted(respondent), low)
-  inherit: [model, select_warrant_triggering_data]
+  inherit: [model, term_definitions, select_warrant_triggering_data]
   turns:
   # What was the result for openness?
   - U: ask([R]>>rel_prob(open(respondent), R))
   # I think you score quite high on openness.
   - S: assert(rel_prob(open(respondent), high))
+  # What does openness mean?
+  - U: ask([D]>>definition(open, D))
+  # Openness to experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people.
+  - S: assert(definition(open, "Openness to experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people."))
   # Why do you think I score high on openness?
   - U: ask([E, M]>>supports(E, rel_prob(open(respondent), high), M))
   # You seem to prefer silent, low-energy and low-tempo music.
@@ -82,6 +93,37 @@ d3:
   # Sorry, I don't know what "death metal" refers to in this context.
   - S: icm(understanding, negative, unresolvable_phrase("death metal"))
 
+d6:
+  facts:
+  - rel_prob(agreeable(respondent), low)
+  inherit: [term_definitions]
+  turns:
+  # What is my result for agreeableness?
+  - U: ask([R]>>rel_prob(agreeable(respondent), R))
+  # I think you rate quite low on agreeableness.
+  - S: assert(rel_prob(agreeable(respondent), low))
+  # I see. Is a lower score on agreeableness a negative quality to have? I am happy with the results in general.
+  - U:
+      unresolvable_phrase: negative quality
+  # Sorry, I don't understand what "negative quality" means in this context.
+  - S: icm(understanding, negative, unresolvable_phrase("negative quality"))
+  # How is agreeableness defined?
+  - U: ask([D]>>definition(agreeable, D))
+  # Agreeableness reflects individual differences in concern with cooperation and social harmony. Agreeable individuals value getting along with others.
+  - S: assert(definition(agreeable, "Agreeableness reflects individual differences in concern with cooperation and social harmony. Agreeable individuals value getting along with others."))
+  # How is extraversion defined?
+  - U: ask([D]>>definition(extraverted, D))
+  # Extraversion is marked by pronounced engagement with the external world. Extraverts enjoy being with people, are full of energy, and often experience positive emotions.
+  - S: assert(definition(extraverted, "Extraversion is marked by pronounced engagement with the external world. Extraverts enjoy being with people, are full of energy, and often experience positive emotions."))
+  # And openness?
+  - U: ask([D]>>definition(open, D))
+  # Openness to experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people.
+  - S: assert(definition(open, "Openness to experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people."))
+  # And neuroticism?
+  - U: ask([D]>>definition(neurotic, D))
+  # Neuroticism refers to the tendency to experience negative feelings such as anxiety, anger, or depression.
+  - S: assert(definition(neurotic, "Neuroticism refers to the tendency to experience negative feelings such as anxiety, anger, or depression."))
+
 d8:
   facts:
   - rel_value(pref_for_live_music(respondent), high)
@@ -111,11 +153,16 @@ d8:
 d10:
   facts:
   - rel_prob(neurotic(respondent), low)
+  inherit: [term_definitions]
   turns:
   # How do you think I score on neuroticism?
   - U: ask([R]>>rel_prob(neurotic(respondent), R))
   # I think you rate quite low on neuroticism.
   - S: assert(rel_prob(neurotic(respondent), low))
+  # What do these terms mean?
+  - U: ask([D]>>definition(_, D))
+  # Openness to experience describes ... Conscientiousness concerns ...
+  - S: assert([definition(open,"Openness to experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people."),definition(agreeable,"Agreeableness reflects individual differences in concern with cooperation and social harmony. Agreeable individuals value getting along with others."),definition(extraverted,"Extraversion is marked by pronounced engagement with the external world. Extraverts enjoy being with people, are full of energy, and often experience positive emotions."),definition(neurotic,"Neuroticism refers to the tendency to experience negative feelings such as anxiety, anger, or depression.")])
   # Why am i neurotisk 
   - U:
       move: ask([E, M]>>supports(E, rel_prob(neurotic(respondent), high), M))
@@ -256,6 +303,20 @@ d19:
   - U: ask([E, M]>>supports(E, rel_prob(neurotic(respondent), low), M))
   # You disprefer acoustic, high-energy music
   - S: assert([rel_value(pref_for_acoustic_music(respondent), high), rel_value(pref_for_high_energy_music(respondent), high)])
+
+d20:
+  facts:
+  - rel_prob(open(respondent), high)
+  turns:
+  # What do you think regarding openness?
+  - U: ask([R]>>rel_prob(open(respondent), R))
+  # I think you score high on openness.
+  - S: assert(rel_prob(open(respondent), high))
+  # Is it mainly the Big Five, you are presented with?
+  - U:
+      unresolvable_phrase: Big Five
+  # Sorry, I don't know what "Big Five" refers to in this context.
+  - S: icm(understanding, negative, unresolvable_phrase("Big Five"))
 
 d34:
   facts:
