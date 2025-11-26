@@ -35,7 +35,8 @@ integrate_acknowledgement :: [
 	] -* agenda(resume(respond(Q))).
 
 respond :: [
-	agenda(respond(Q)),
+	agenda(Item),
+	$member(Item, [respond(Q), inform(Q)]),
 	$findall(P, valid_answer(Q, P), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
 	$answer_move(Q, SelectedAnswers, Move)
@@ -51,6 +52,7 @@ resume_responding :: [
 		\+ (@responded(Q, Ps), member(P, Ps))
 	), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
+	$(SelectedAnswers \== []),
 	$answer_move(Q, SelectedAnswers, Move)
 	] -* [
 		utter([signal_resumption, Move]),

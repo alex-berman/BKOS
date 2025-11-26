@@ -39,6 +39,10 @@ valid_answer([_]>>P, P) :-
 	P \= supports(_, _, _),
 	@P.
 
+valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
+	is_list(Es),
+	forall(member(E, Es), valid_answer([]>>supports(E, C, M), supports(E, C, M))).
+
 
 has_variable_and_body(Vars>>Body, Var, Body) :-
 	member(Var1, Vars),
@@ -87,9 +91,11 @@ answer_move(Vars>>supports(E, C, M), As, Move) :-
 	Inferences \== [],
 	normalize(Inferences, Move).
 
-answer_move([]>>P, [P], confirm(P)).
+answer_move([]>>P, [P], confirm(P)) :-
+	@agenda(respond([]>>P)).
 
-answer_move([]>>P, [not(P)], disconfirm(not(P))).
+answer_move([]>>P, [not(P)], disconfirm(not(P))) :-
+	@agenda(respond([]>>P)).
 
 answer_move([]>>P, [rel_prob(P, high)], confirm(rel_prob(P, high))).
 
