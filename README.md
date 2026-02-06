@@ -35,7 +35,7 @@ swipl -g "run_test('test/dialog_coverage_spinal_stenosis.yml', explain_claim_wit
 This will execute the selected test until the trace point is encountered.
 
 # Version
-This repository contains BKOS version 2, implemented in SWI Prolog. Note that there is a [previous version of BKOS](https://github.com/alex-berman/BKOS), implemented in Python.
+This repository contains BKOS version 2, implemented in SWI Prolog. Note that there is a [previous version of BKOS](https://github.com/alex-berman/BKOS-py), implemented in Python.
 
 # Contact
 For correspondence, contact alexander.berman@gu.se
