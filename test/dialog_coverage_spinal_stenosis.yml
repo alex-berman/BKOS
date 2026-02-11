@@ -33,10 +33,10 @@ spinal_stenosis_model:
   - supports(value(has_other_illness(X), false), rel_prob(satisfied(X), high), association)
   - supports(value(has_other_illness(X), true), rel_prob(satisfied(X), low), association)
 
-respond_in_agenda:
+inform_on_agenda:
   inherit: [pat_1]
   facts:
-  - agenda(respond([X]>>rel_prob(satisfied(pat_1), X)))
+  - agenda(inform([X]>>rel_prob(satisfied(pat_1), X)))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
 
@@ -229,7 +229,7 @@ disconfirm_warrant:
 
 respond_to_open_request_for_forward_expansion:
   facts:
-  - agenda(respond([X]>>rel_value(back_pain(pat_1), X)))
+  - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
   turns:
   - S: assert(rel_value(back_pain(pat_1), low))
@@ -238,7 +238,7 @@ respond_to_open_request_for_forward_expansion:
 
 confirm_forward_expansion:
   facts:
-  - agenda(respond([X]>>rel_value(back_pain(pat_1), X)))
+  - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
   inherit: [pat_1, spinal_stenosis_model]
   turns:
   - S: assert(rel_value(back_pain(pat_1), low))
