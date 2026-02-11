@@ -46,7 +46,8 @@ respond :: [
 	].
 
 resume_responding :: [
-	agenda(resume(respond(Q))),
+	agenda(resume(Item)),
+	$member(Item, [respond(Q), inform(Q)]),
 	$findall(P, (
 		valid_answer(Q, P),
 		\+ (@responded(Q, Ps), member(P, Ps))
