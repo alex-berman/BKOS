@@ -97,9 +97,11 @@ answer_move([]>>P, [P], confirm(P)) :-
 answer_move([]>>P, [not(P)], disconfirm(not(P))) :-
 	@agenda(respond([]>>P)).
 
-answer_move([]>>P, [rel_prob(P, high)], confirm(rel_prob(P, high))).
+answer_move([]>>P, [rel_prob(P, high)], confirm(rel_prob(P, high))) :-
+	@agenda(respond([]>>P)).
 
-answer_move([]>>P, [rel_prob(P, low)], disconfirm(rel_prob(P, low))).
+answer_move([]>>P, [rel_prob(P, low)], disconfirm(rel_prob(P, low))) :-
+	@agenda(respond([]>>P)).
 
 answer_move(_, Ps, assert(P)) :-
 	normalize(Ps, P).

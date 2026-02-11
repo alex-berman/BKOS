@@ -33,31 +33,45 @@ spinal_stenosis_model:
   - supports(value(has_other_illness(X), false), rel_prob(satisfied(X), high), association)
   - supports(value(has_other_illness(X), true), rel_prob(satisfied(X), low), association)
 
-inform_on_agenda:
+unpromptedly_answer_wh_question_concerning_predicted_probability:
   inherit: [pat_1]
   facts:
   - agenda(inform([X]>>rel_prob(satisfied(pat_1), X)))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
 
-answer_wh_question_concerning_predicted_probability:
+reactively_answer_wh_question_concerning_predicted_probability:
   inherit: [pat_1]
   turns:
   - U: ask([X]>>rel_prob(satisfied(pat_1), X))
   - S: assert(rel_prob(satisfied(pat_1), high))
 
-answer_polar_question_with_confirmation_concerning_probability:
+reactively_answer_polar_question_with_confirmation_concerning_probability:
   inherit: [pat_1]
   turns:
   - U: ask([]>>satisfied(pat_1))
   - S: confirm(rel_prob(satisfied(pat_1), high))
 
-answer_polar_question_with_disconfirmation_concerning_probability:
+unpromptedly_answer_polar_question_with_confirmation_concerning_probability:
+  inherit: [pat_1]
   facts:
-   - rel_prob(satisfied(pat_2), low)
+  - agenda(inform([]>>satisfied(pat_1)))
+  turns:
+  - S: assert(rel_prob(satisfied(pat_1), high))
+
+reactively_answer_polar_question_with_disconfirmation_concerning_probability:
+  facts:
+  - rel_prob(satisfied(pat_2), low)
   turns:
   - U: ask([]>>satisfied(pat_2))
   - S: disconfirm(rel_prob(satisfied(pat_2), low))
+
+unpromptedly_answer_polar_question_with_disconfirmation_concerning_probability:
+  facts:
+  - rel_prob(satisfied(pat_2), low)
+  - agenda(inform([]>>satisfied(pat_2)))
+  turns:
+  - S: assert(rel_prob(satisfied(pat_2), low))
 
 explain_claim_with_exact_data:
   inherit: [pat_1, select_exact_data, spinal_stenosis_model]
