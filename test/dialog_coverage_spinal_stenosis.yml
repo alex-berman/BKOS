@@ -250,7 +250,7 @@ respond_to_open_request_for_forward_expansion:
   - U: ask([C, M]>>supports(rel_value(back_pain(pat_1), low), C, M))
   - S: assert(rel_prob(satisfied(pat_1), high))
 
-confirm_forward_expansion:
+confirm_forward_expansion_from_single_proposition:
   facts:
   - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
   inherit: [pat_1, spinal_stenosis_model]
@@ -258,6 +258,15 @@ confirm_forward_expansion:
   - S: assert(rel_value(back_pain(pat_1), low))
   - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
   - S: confirm(supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), association))
+
+confirm_forward_expansion_from_conjunction:
+  facts:
+  - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
+  inherit: [pat_1, spinal_stenosis_model]
+  turns:
+  - S: assert(rel_value(back_pain(pat_1), low))
+  - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
+  - S: confirm(supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
 
 provide_evidence_against_claim:
   inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
