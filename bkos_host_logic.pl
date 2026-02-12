@@ -44,7 +44,7 @@ valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
 	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
 
 valid_answer([]>>supports(Es, C, M), not(supports(Zs, C, M))) :-
-	findall(Y, (member(Y, Es), \+ supports_directly_or_indirectly(Y, C)), Zs),
+	findall(Z, (member(Z, Es), \+ supports_directly_or_indirectly(Z, C)), Zs),
 	Zs \== [].
 
 
