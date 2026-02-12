@@ -353,7 +353,7 @@ confirm_datum_explanans_for_belief_not_held_by_system:
   - U: ask([]>>supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), _))
   - S: confirm(supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), association))
 
-disconfirm_datum_explanans:
+disconfirm_isolated_datum_explanans:
   inherit: [pat_1, spinal_stenosis_model]
   facts:
   - agenda(inform([]>>satisfied(pat_1)))
@@ -361,6 +361,15 @@ disconfirm_datum_explanans:
   - S: assert(rel_prob(satisfied(pat_1), high))
   - U: ask([]>>supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), high), _))
   - S: disconfirm(not(supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), high), association)))
+
+disconfirm_datum_explanans_in_conjunction:
+  inherit: [pat_1, spinal_stenosis_model]
+  facts:
+  - agenda(inform([]>>satisfied(pat_1)))
+  turns:
+  - S: assert(rel_prob(satisfied(pat_1), high))
+  - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(back_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), high), _))
+  - S: disconfirm(not(supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), high), _)))
 
 reject_move_with_presupposition_violation_wrt_rel_prob:
   inherit: [pat_1, spinal_stenosis_model]
