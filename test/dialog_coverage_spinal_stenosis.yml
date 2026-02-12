@@ -369,7 +369,7 @@ disconfirm_datum_explanans_in_conjunction:
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
   - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(back_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), high), _))
-  - S: disconfirm(not(supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), high), _)))
+  - S: disconfirm(not(supports([rel_value(back_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), high), _)))
 
 reject_move_with_presupposition_violation_wrt_rel_prob:
   inherit: [pat_1, spinal_stenosis_model]
