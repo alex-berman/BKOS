@@ -41,7 +41,7 @@ valid_answer([_]>>P, P) :-
 
 valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
 	is_list(Es),
-	forall(member(E, Es), valid_answer([]>>supports(E, C, M), supports(E, C, M))).
+	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
 
 
 has_variable_and_body(Vars>>Body, Var, Body) :-
