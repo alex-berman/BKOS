@@ -43,9 +43,9 @@ valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
 	is_list(Es),
 	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
 
-valid_answer([]>>supports(Xs, C, M), not(supports(Ys, C, M))) :-
-	findall(Y, (member(Y, Xs), \+ supports_directly_or_indirectly(Y, C)), Ys),
-	Ys \== [].
+valid_answer([]>>supports(Es, C, M), not(supports(Zs, C, M))) :-
+	findall(Y, (member(Y, Es), \+ supports_directly_or_indirectly(Y, C)), Zs),
+	Zs \== [].
 
 
 has_variable_and_body(Vars>>Body, Var, Body) :-
@@ -101,8 +101,8 @@ answer_move([]>>P, [P], confirm(P)) :-
 answer_move([]>>P, [not(P)], disconfirm(not(P))) :-
 	@agenda(respond([]>>P)).
 
-answer_move([]>>supports(Xs, C, M), [not(supports(Ys, C, M))], disconfirm(not(supports(Ys, C, M)))) :-
-	@agenda(respond([]>>supports(Xs, C, M))).
+answer_move([]>>supports(Es, C, M), [not(supports(Zs, C, M))], disconfirm(not(supports(Zs, C, M)))) :-
+	@agenda(respond([]>>supports(Es, C, M))).
 
 answer_move([]>>P, [rel_prob(P, high)], confirm(rel_prob(P, high))) :-
 	@agenda(respond([]>>P)).
