@@ -250,10 +250,10 @@ respond_to_open_request_for_forward_expansion:
   - U: ask([C, M]>>supports(rel_value(back_pain(pat_1), low), C, M))
   - S: assert(rel_prob(satisfied(pat_1), high))
 
-confirm_forward_expansion_from_single_proposition:
+confirm_forward_expansion_from_single_datum:
   facts:
-  - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
-  inherit: [pat_1, spinal_stenosis_model]
+  - agenda(inform([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M)))
+  inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
   turns:
   - S: assert(rel_value(back_pain(pat_1), low))
   - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
@@ -261,10 +261,10 @@ confirm_forward_expansion_from_single_proposition:
 
 confirm_forward_expansion_from_conjunction:
   facts:
-  - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
-  inherit: [pat_1, spinal_stenosis_model]
+  - agenda(inform([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M)))
+  inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
   turns:
-  - S: assert(rel_value(back_pain(pat_1), low))
+  - S: assert([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low), value(has_other_illness(pat_1), false)])
   - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
   - S: confirm(supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
 
