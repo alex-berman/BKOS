@@ -395,9 +395,9 @@ explain_moderate_estimated_probability_caused_by_moderate_feature_values:
   - rel_value(back_pain(pat_1), moderate)
   - rel_value(disability(pat_1), moderate)
   - rel_prob(satisfied(pat_1), moderate)
+  - agenda(inform([]>>satisfied(pat_1)))
   inherit: [select_warrant_triggering_data, spinal_stenosis_model]
   turns:
-  - U: ask([]>>satisfied(pat_1))
   - S: assert(rel_prob(satisfied(pat_1), moderate))
   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), moderate), M))
   - S: assert([rel_value(back_pain(pat_1), moderate), rel_value(disability(pat_1), moderate)])
@@ -409,9 +409,9 @@ explain_moderate_estimated_probability_with_contrasting_implications:
   - value(disability(pat_1), 26)
   - rel_value(back_pain(pat_1), high)
   - rel_prob(satisfied(pat_1), moderate)
+  - agenda(inform([]>>satisfied(pat_1)))
   inherit: [select_warrant_triggering_data, spinal_stenosis_model]
   turns:
-  - U: ask([]>>satisfied(pat_1))
   - S: assert(rel_prob(satisfied(pat_1), moderate))
   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), moderate), M))
   - S:
