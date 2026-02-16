@@ -5,7 +5,7 @@ BKOS is primarily intended for faithfully explaining classifications made by int
 BKOS' conversational capabilities are described in Alexander Berman's PhD thesis (in preparation).
 
 # Development process
-BKOS has been developed through a process of dialogue distillation (Dahlbäck et al. 2000; Larsson et al. 2000). Through this process, human-human dialogues are re-written to analogous human-computer interactions in ways that inform design and implementation of a dialogue system serving in the role of one of the human interlocutors. Specifically, BKOS was developed by distilling the following corpora:
+BKOS has been developed through a process of dialogue distillation (Dahlbäck et al. 2000; Larsson et al. 2000). Through this process, human-human dialogues are rewritten to analogous human-computer interactions in ways that inform design and implementation of a dialogue system serving in the role of one of the human interlocutors. Specifically, BKOS was developed by distilling the following corpora:
 
 - 12 medical spoken dialogues from 3 empirical sources: doctor-patient consultations from Ahus, anesthesiologists' interactions during neurosurgical operations, and a textbook in medicine focusing on the encounter between patient and doctor
 - 35 experimentally collected web chats between laypersons revolving around AI-assisted personality estimation
@@ -21,15 +21,15 @@ swipl -g run_tests -t halt test/test_bkos.pl
 
 The test suite contains:
 
-- [dialog_coverage_medical.yml](test/dialog_coverage_medical.yml): Re-written medical spoken dialogues
-- [dialog_coverage_music_personality.yml](test/dialog_coverage_music_personality.yml): Re-written web chats about personality estimation
-- [dialog_coverage_spinal_stenosis.yml](test/dialog_coverage_spinal_stenosis.yml): Hypothetical human-computer dialogues in the context of AI-assisted treatment choice for spinal stenosis, serving to document and validate system capabilities
+- [medical.yml](test/dialog_coverage/medical.yml): Rewritten medical spoken dialogues
+- [music_personality.yml](test/dialog_coverage/music_personality.yml): Rewritten web chats about personality estimation
+- [spinal_stenosis.yml](test/dialog_coverage/spinal_stenosis.yml): Hypothetical human-computer dialogues in the context of AI-assisted treatment choice for spinal stenosis, serving to document and validate system capabilities
 
 # Debugging and tracing with coverage testing
 SWI Prolog's support for debugging and tracing can be useful when troubleshooting test failures. If we assume that the test named `explain_claim_with_exact_data` is failing and we want to understand why, we can, e.g. insert a `trace` invocation somethere in the code, and then run the test as follows:
 
 ```
-swipl -g "run_test('test/dialog_coverage_spinal_stenosis.yml', explain_claim_with_exact_data)" test/test_bkos.pl
+swipl -g "run_test('test/dialog_coverage/spinal_stenosis.yml', explain_claim_with_exact_data)" test/test_bkos.pl
 ```
 
 This will execute the selected test until the trace point is encountered.
