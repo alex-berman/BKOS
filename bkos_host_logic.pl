@@ -79,7 +79,7 @@ supports_directly_or_indirectly(A, C) :-
 	member(A, Evidence).
 
 
-answer_move(Vars>>supports(E, C, M), As, Move) :-
+answer_move(Vars>>supports(E, C, M), _, As, Move) :-
 	member(C, [rel_prob(P, moderate), prob(P, _)]),
 	findall(
 		infer(NormalizedEvidence, rel_prob(P, R)),
@@ -95,22 +95,17 @@ answer_move(Vars>>supports(E, C, M), As, Move) :-
 	Inferences \== [],
 	normalize(Inferences, Move).
 
-answer_move([]>>P, [P], confirm(P)) :-
-	@agenda(respond([]>>P)).
+answer_move([]>>P, user, [P], confirm(P)).
 
-answer_move([]>>P, [not(P)], disconfirm(not(P))) :-
-	@agenda(respond([]>>P)).
+answer_move([]>>P, user, [not(P)], disconfirm(not(P))).
 
-answer_move([]>>supports(Es, C, M), [not(supports(Zs, C, M))], disconfirm(not(supports(Zs, C, M)))) :-
-	@agenda(respond([]>>supports(Es, C, M))).
+answer_move([]>>supports(_, C, M), user, [not(supports(E, C, M))], disconfirm(not(supports(E, C, M)))).
 
-answer_move([]>>P, [rel_prob(P, high)], confirm(rel_prob(P, high))) :-
-	@agenda(respond([]>>P)).
+answer_move([]>>P, user, [rel_prob(P, high)], confirm(rel_prob(P, high))).
 
-answer_move([]>>P, [rel_prob(P, low)], disconfirm(rel_prob(P, low))) :-
-	@agenda(respond([]>>P)).
+answer_move([]>>P, user, [rel_prob(P, low)], disconfirm(rel_prob(P, low))).
 
-answer_move(_, Ps, assert(P)) :-
+answer_move(_, _, Ps, assert(P)) :-
 	normalize(Ps, P).
 
 

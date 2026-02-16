@@ -23,7 +23,7 @@ excerpt_3_2_ahus_variant_1:
   - chest_xray_recommended(pat_1)
   - supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association)
   - supports(rel_prob(lung_abnormality(X), high), chest_xray_recommended(X), norm)
-  - agenda(inform([]>>chest_xray_recommended(pat_1)))
+  - agenda(respond([]>>chest_xray_recommended(pat_1), system))
   inherit: [prefer_non_probabilistic_datum]
   turns:
   # I recommend performing a chest X-ray.
@@ -49,7 +49,7 @@ excerpt_3_2_ahus_variant_2:
   - chest_xray_recommended(pat_1)
   - supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association)
   - supports(rel_prob(lung_abnormality(X), high), chest_xray_recommended(X), norm)
-  - agenda(inform([]>>chest_xray_recommended(pat_1)))
+  - agenda(respond([]>>chest_xray_recommended(pat_1), system))
   inherit: [select_1st_datum]
   turns:
   # I recommend performing a chest X-ray.
@@ -94,7 +94,7 @@ excerpt_3_4_LA_p17:
   - rel_value(cholesterol_levels(pat_1), moderate)
   - supports(rel_value(blood_sugar(X), moderate), rel_value(overall_health(pat_1), high), association)
   - supports(rel_value(cholesterol_levels(X), moderate), rel_value(overall_health(pat_1), high), association)
-  - agenda(inform([E, M]>>supports(E, rel_value(overall_health(pat_1), high), M)))
+  - agenda(respond([E, M]>>supports(E, rel_value(overall_health(pat_1), high), M), system))
   inherit: [select_warrant_triggering_data]
   turns:
   # Your blood sugar is perfectly normal, and your cholesterol levels are good too.
@@ -110,7 +110,7 @@ excerpt_3_5_LA_p251:
   - value(has_tumor(pat_1), true)
   - supports(value(cellular_changes_in_bronchoscopy(X), true), value(has_tumor(X), true), association)
   - supports(value(has_tumor(X), true), value(has_cancer(X), true), entailment)
-  - agenda(inform([V]>>value(cellular_changes_in_bronchoscopy(pat_1), V)))
+  - agenda(respond([V]>>value(cellular_changes_in_bronchoscopy(pat_1), V), system))
   inherit: [select_1st_datum]
   turns:
   # The sample taken during the bronchoscopy showed cellular changes.
@@ -164,7 +164,7 @@ excerpt_3_9_and_3_12_johannesen_p41_variant_o:
   - supports(rel_value(nare_size(X), low), big_tube_needed(X), causation)
   - supports(rel_value(body_size(X), high), big_tube_needed(X), causation)
   - supports(big_tube_needed(X), oral_intubation_recommended(X), association)
-  - agenda(inform([]>>oral_intubation_recommended(pat_1)))
+  - agenda(respond([]>>oral_intubation_recommended(pat_1), system))
   inherit: [select_proximate_data]
   turns:
   # I suggest oral intubation
@@ -183,7 +183,7 @@ excerpt_3_9_and_3_12_johannesen_p41_variant_n:
   - nasal_intubation_recommended(pat_1)
   - rel_value(airway_size(pat_1), high)
   - supports(rel_value(airway_size(X), high), oral_intubation_recommended(X), association)
-  - agenda(inform([]>>nasal_intubation_recommended(pat_1)))
+  - agenda(respond([]>>nasal_intubation_recommended(pat_1), system))
   turns:
   # I suggest nasal intubation
   - S: assert(nasal_intubation_recommended(pat_1))

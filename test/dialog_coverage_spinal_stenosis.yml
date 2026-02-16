@@ -38,7 +38,7 @@ spinal_stenosis_model:
 unpromptedly_answer_wh_question_concerning_predicted_probability:
   inherit: [pat_1]
   facts:
-  - agenda(inform([X]>>rel_prob(satisfied(pat_1), X)))
+  - agenda(respond([X]>>rel_prob(satisfied(pat_1), X), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
 
@@ -57,7 +57,7 @@ reactively_answer_polar_question_with_confirmation_concerning_probability:
 unpromptedly_answer_polar_question_with_confirmation_concerning_probability:
   inherit: [pat_1]
   facts:
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
 
@@ -71,7 +71,7 @@ reactively_answer_polar_question_with_disconfirmation_concerning_probability:
 unpromptedly_answer_polar_question_with_disconfirmation_concerning_probability:
   facts:
   - rel_prob(satisfied(pat_2), low)
-  - agenda(inform([]>>satisfied(pat_2)))
+  - agenda(respond([]>>satisfied(pat_2), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_2), low))
 
@@ -245,7 +245,7 @@ disconfirm_warrant:
 
 respond_to_open_request_for_forward_expansion:
   facts:
-  - agenda(inform([X]>>rel_value(back_pain(pat_1), X)))
+  - agenda(respond([X]>>rel_value(back_pain(pat_1), X), system))
   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
   turns:
   - S: assert(rel_value(back_pain(pat_1), low))
@@ -254,7 +254,7 @@ respond_to_open_request_for_forward_expansion:
 
 confirm_forward_expansion_from_single_datum:
   facts:
-  - agenda(inform([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M)))
+  - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
   turns:
   - S: assert(rel_value(back_pain(pat_1), low))
@@ -263,7 +263,7 @@ confirm_forward_expansion_from_single_datum:
 
 confirm_forward_expansion_from_conjunction:
   facts:
-  - agenda(inform([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M)))
+  - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
   inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
   turns:
   - S: assert([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low), value(has_other_illness(pat_1), false)])
@@ -338,7 +338,7 @@ signal_negative_understanding:
 confirm_datum_explanans_for_belief_held_by_system:
   inherit: [pat_1, spinal_stenosis_model]
   facts:
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
   - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
@@ -347,7 +347,7 @@ confirm_datum_explanans_for_belief_held_by_system:
 confirm_datum_explanans_for_belief_not_held_by_system:
   inherit: [pat_1, spinal_stenosis_model]
   facts:
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
   - U: ask([]>>supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), _))
@@ -356,7 +356,7 @@ confirm_datum_explanans_for_belief_not_held_by_system:
 disconfirm_isolated_datum_explanans:
   inherit: [pat_1, spinal_stenosis_model]
   facts:
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
   - U: ask([]>>supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), high), _))
@@ -365,7 +365,7 @@ disconfirm_isolated_datum_explanans:
 disconfirm_datum_explanans_in_conjunction:
   inherit: [pat_1, spinal_stenosis_model]
   facts:
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   turns:
   - S: assert(rel_prob(satisfied(pat_1), high))
   - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(back_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), high), _))
@@ -395,7 +395,7 @@ explain_moderate_estimated_probability_caused_by_moderate_feature_values:
   - rel_value(back_pain(pat_1), moderate)
   - rel_value(disability(pat_1), moderate)
   - rel_prob(satisfied(pat_1), moderate)
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   inherit: [select_warrant_triggering_data, spinal_stenosis_model]
   turns:
   - S: assert(rel_prob(satisfied(pat_1), moderate))
@@ -409,7 +409,7 @@ explain_moderate_estimated_probability_with_contrasting_implications:
   - value(disability(pat_1), 26)
   - rel_value(back_pain(pat_1), high)
   - rel_prob(satisfied(pat_1), moderate)
-  - agenda(inform([]>>satisfied(pat_1)))
+  - agenda(respond([]>>satisfied(pat_1), system))
   inherit: [select_warrant_triggering_data, spinal_stenosis_model]
   turns:
   - S: assert(rel_prob(satisfied(pat_1), moderate))

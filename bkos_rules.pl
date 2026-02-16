@@ -26,35 +26,33 @@ integrate_question :: [
 	*responded(Q, _)
 	] -* [
 		qud(Q),
-		agenda(respond(Q))
+		agenda(respond(Q, user))
 	].
 
 integrate_acknowledgement :: [
 	accepted(icm(acceptance, positive)),
 	^qud(Q)
-	] -* agenda(resume(respond(Q))).
+	] -* agenda(resume(respond(Q, user))).
 
 respond :: [
-	agenda(Item),
-	$member(Item, [respond(Q), inform(Q)]),
+	agenda(respond(Q, Interrogator)),
 	$findall(P, valid_answer(Q, P), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
-	$answer_move(Q, SelectedAnswers, Move)
+	$answer_move(Q, Interrogator, SelectedAnswers, Move)
 	] -* [
 		utter(Move),
 		responded(Q, SelectedAnswers)
 	].
 
 resume_responding :: [
-	agenda(resume(Item)),
-	$member(Item, [respond(Q), inform(Q)]),
+	agenda(resume(respond(Q, Interrogator))),
 	$findall(P, (
 		valid_answer(Q, P),
 		\+ (@responded(Q, Ps), member(P, Ps))
 	), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
 	$(SelectedAnswers \== []),
-	$answer_move(Q, SelectedAnswers, Move)
+	$answer_move(Q, Interrogator, SelectedAnswers, Move)
 	] -* [
 		utter([signal_resumption, Move]),
 		responded(Q, SelectedAnswers)
