@@ -24,7 +24,7 @@ excerpt_3_2_ahus_variant_1:
   - supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association)
   - supports(rel_prob(lung_abnormality(X), high), chest_xray_recommended(X), norm)
   - agenda(respond([]>>chest_xray_recommended(pat_1), system))
-  inherit: [prefer_non_probabilistic_datum]
+  inherit: [prefer_empirically_grounded_datum]
   turns:
   # I recommend performing a chest X-ray.
   - S: assert(chest_xray_recommended(pat_1))

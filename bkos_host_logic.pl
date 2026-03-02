@@ -2,18 +2,26 @@
 :- ensure_loaded(db).
 
 
-valid_answer([]>>P, P) :-
+valid_answer([_]>>P, P) :-
 	@P.
 
-valid_answer([]>>P, not(P)) :-
-	@not(P).
+% valid_answer([]>>P, P) :-
+% 	@P.
+
+% valid_answer([]>>P, not(P)) :-
+% 	@not(P).
 
 valid_answer([]>>P, rel_prob(P, R)) :-
 	@rel_prob(P, R).
 
 valid_answer(Q, D) :-
-	has_variable_and_body(Q, E, supports(E, C, _)),
-	supports_directly_or_indirectly(D, C).
+  has_variable_and_body(Q, E, supports(E, C, _)),
+  @supports(D, C, _),
+  @D.
+
+% valid_answer(Q, D) :-
+% 	has_variable_and_body(Q, E, supports(E, C, _)),
+% 	supports_directly_or_indirectly(D, C).
 
 valid_answer(Q, W) :-
 	has_variable_and_body(Q, E, supports(E, C, _)),
@@ -23,29 +31,29 @@ valid_answer(Q, W) :-
 	copy_term(WA, WA1),
 	@WA1.
 
-valid_answer(Q, C) :-
-    has_variable_and_body(Q, XC, supports(D, XC, _)),
-	supports_directly_or_indirectly(D, C).
+% valid_answer(Q, C) :-
+%     has_variable_and_body(Q, XC, supports(D, XC, _)),
+% 	supports_directly_or_indirectly(D, C).
 
-valid_answer(Vars>>supports(E, prob(Event, _), M), A) :-
-	member(R, [low, high]),
-	valid_answer(Vars>>supports(E, rel_prob(Event, R), M), A).
+% valid_answer(Vars>>supports(E, prob(Event, _), M), A) :-
+% 	member(R, [low, high]),
+% 	valid_answer(Vars>>supports(E, rel_prob(Event, R), M), A).
 
-valid_answer([M]>>P, P) :-
-	P = supports(_, _, M),
-	@P.
+% valid_answer([M]>>P, P) :-
+% 	P = supports(_, _, M),
+% 	@P.
 
-valid_answer([_]>>P, P) :-
-	P \= supports(_, _, _),
-	@P.
+% valid_answer([_]>>P, P) :-
+% 	P \= supports(_, _, _),
+% 	@P.
 
-valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
-	is_list(Es),
-	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
+% valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
+% 	is_list(Es),
+% 	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
 
-valid_answer([]>>supports(Es, C, M), not(supports(Zs, C, M))) :-
-	findall(Z, (member(Z, Es), \+ supports_directly_or_indirectly(Z, C)), Zs),
-	Zs \== [].
+% valid_answer([]>>supports(Es, C, M), not(supports(Zs, C, M))) :-
+% 	findall(Z, (member(Z, Es), \+ supports_directly_or_indirectly(Z, C)), Zs),
+% 	Zs \== [].
 
 
 has_variable_and_body(Vars>>Body, Var, Body) :-
@@ -53,53 +61,53 @@ has_variable_and_body(Vars>>Body, Var, Body) :-
 	Var1 == Var.
 
 
-supports_directly_or_indirectly(D, C) :-
-	@supports(A, C, _),
-	@A,
-	(
-		D = A
-	;
-		A = rel_value(P, _),
-		D = value(P, _),
-		@D
-	).
+% supports_directly_or_indirectly(D, C) :-
+% 	@supports(A, C, _),
+% 	@A,
+% 	(
+% 		D = A
+% 	;
+% 		A = rel_value(P, _),
+% 		D = value(P, _),
+% 		@D
+% 	).
 
-supports_directly_or_indirectly(A, C) :-
-	@supports(A1, C, _),
-	@A1,
-	supports_directly_or_indirectly(A, A1).
+% supports_directly_or_indirectly(A, C) :-
+% 	@supports(A1, C, _),
+% 	@A1,
+% 	supports_directly_or_indirectly(A, A1).
 
-supports_directly_or_indirectly(A, C) :-
-	C = rel_prob(Event, moderate),
-	@C,
-	findall(E, (
-		member(R, [high, low]),
-		supports_directly_or_indirectly(E, rel_prob(Event, R))
-		), Evidence),
-	member(A, Evidence).
+% supports_directly_or_indirectly(A, C) :-
+% 	C = rel_prob(Event, moderate),
+% 	@C,
+% 	findall(E, (
+% 		member(R, [high, low]),
+% 		supports_directly_or_indirectly(E, rel_prob(Event, R))
+% 		), Evidence),
+% 	member(A, Evidence).
 
 
-answer_move(Vars>>supports(E, C, M), _, As, Move) :-
-	member(C, [rel_prob(P, moderate), prob(P, _)]),
-	findall(
-		infer(NormalizedEvidence, rel_prob(P, R)),
-		(
-			member(R, [high, low]),
-			findall(A,
-				(member(A, As), valid_answer(Vars>>supports(E, rel_prob(P, R), M), A)),
-				Evidence),
-			Evidence \== [],
-			normalize(Evidence, NormalizedEvidence)
-		),
-		Inferences),
-	Inferences \== [],
-	normalize(Inferences, Move).
+% answer_move(Vars>>supports(E, C, M), _, As, Move) :-
+% 	member(C, [rel_prob(P, moderate), prob(P, _)]),
+% 	findall(
+% 		infer(NormalizedEvidence, rel_prob(P, R)),
+% 		(
+% 			member(R, [high, low]),
+% 			findall(A,
+% 				(member(A, As), valid_answer(Vars>>supports(E, rel_prob(P, R), M), A)),
+% 				Evidence),
+% 			Evidence \== [],
+% 			normalize(Evidence, NormalizedEvidence)
+% 		),
+% 		Inferences),
+% 	Inferences \== [],
+% 	normalize(Inferences, Move).
 
-answer_move([]>>P, user, [P], confirm(P)).
+% answer_move([]>>P, user, [P], confirm(P)).
 
-answer_move([]>>P, user, [not(P)], disconfirm(not(P))).
+% answer_move([]>>P, user, [not(P)], disconfirm(not(P))).
 
-answer_move([]>>supports(_, C, M), user, [not(supports(E, C, M))], disconfirm(not(supports(E, C, M)))).
+% answer_move([]>>supports(_, C, M), user, [not(supports(E, C, M))], disconfirm(not(supports(E, C, M)))).
 
 answer_move([]>>P, user, [rel_prob(P, high)], confirm(rel_prob(P, high))).
 
@@ -123,9 +131,9 @@ select_answers(Q, Candidates, Result) :-
 	).
 
 
-contradicts(rel_prob(Event, X), rel_prob(Event, Y)) :-
-	X \== Y.
+% contradicts(rel_prob(Event, X), rel_prob(Event, Y)) :-
+% 	X \== Y.
 
-contradicts(rel_value(Property, X), rel_value(Property, Y)) :-
-	X \== Y.
+% contradicts(rel_value(Property, X), rel_value(Property, Y)) :-
+% 	X \== Y.
 	  
