@@ -202,33 +202,88 @@ deliver_explanations_incrementally:
 #   - U: icm(acceptance, positive)
 #   - S: {}
 
-# explain_chained_inference_with_first_valid_datum:
+explain_chained_inference_with_non_probabilistic_datum:
+  facts:
+  - surgery_recommended(pat_1)
+  - supports(rel_prob(satisfied(X), high), surgery_recommended(X), norm)
+  - supports(rel_prob(satisfied(X), moderate), not(surgery_recommended(X)), norm)
+  - supports(rel_prob(satisfied(X), low), not(surgery_recommended(X)), norm)
+  inherit: [pat_1, prefer_empirically_grounded_datum, spinal_stenosis_model]
+  turns:
+  - U: ask([E, M]>>supports(E, surgery_recommended(pat_1), M))
+  - S: assert(rel_value(back_pain(pat_1), low))
+
+explain_chained_inference_with_first_valid_datum:
+  facts:
+  - surgery_recommended(pat_1)
+  - supports(rel_prob(satisfied(X), high), surgery_recommended(X), norm)
+  - supports(rel_prob(satisfied(X), moderate), not(surgery_recommended(X)), norm)
+  - supports(rel_prob(satisfied(X), low), not(surgery_recommended(X)), norm)
+  inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
+  turns:
+  - U: ask([E, M]>>supports(E, surgery_recommended(pat_1), M))
+  - S: assert(rel_prob(satisfied(pat_1), high))
+  - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
+  - S: assert(rel_value(back_pain(pat_1), low))
+
+respond_to_open_request_for_forward_expansion:
+  facts:
+  - agenda(respond([X]>>rel_value(back_pain(pat_1), X), system))
+  inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
+  turns:
+  - S: assert(rel_value(back_pain(pat_1), low))
+  - U: ask([C, M]>>supports(rel_value(back_pain(pat_1), low), C, M))
+  - S: assert(rel_prob(satisfied(pat_1), high))
+
+explain_numerical_claim_with_contradictory_implications:
+  inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
+  turns:
+  - U: ask([X]>>prob(satisfied(pat_1), X))
+  - S: assert(prob(satisfied(pat_1), 0.75))
+  - U: ask([E, M]>>supports(E, prob(satisfied(pat_1), 0.75), M))
+  - S:
+      move:
+      - infer([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low), value(has_other_illness(pat_1), false)], rel_prob(satisfied(pat_1), high))
+      - infer([rel_value(back_pain_duration(pat_1), high), rel_value(leg_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), low))
+
+explain_moderate_estimated_probability_caused_by_moderate_feature_values:
+  facts:
+  - value(back_pain(pat_1), 5)
+  - rel_value(back_pain(pat_1), moderate)
+  - rel_value(disability(pat_1), moderate)
+  - rel_prob(satisfied(pat_1), moderate)
+  - agenda(respond([]>>satisfied(pat_1), system))
+  inherit: [select_warrant_triggering_data, spinal_stenosis_model]
+  turns:
+  - S: assert(rel_prob(satisfied(pat_1), moderate))
+  - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), moderate), M))
+  - S: assert([rel_value(back_pain(pat_1), moderate), rel_value(disability(pat_1), moderate)])
+
+explain_moderate_estimated_probability_with_contradictory_implications:
+  facts:
+  - value(back_pain(pat_1), 7)
+  - rel_value(disability(pat_1), low)
+  - value(disability(pat_1), 26)
+  - rel_value(back_pain(pat_1), high)
+  - rel_prob(satisfied(pat_1), moderate)
+  - agenda(respond([]>>satisfied(pat_1), system))
+  inherit: [select_warrant_triggering_data, spinal_stenosis_model]
+  turns:
+  - S: assert(rel_prob(satisfied(pat_1), moderate))
+  - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), moderate), M))
+  - S:
+      move:
+      - infer(rel_value(disability(pat_1), low), rel_prob(satisfied(pat_1), high))
+      - infer(rel_value(back_pain(pat_1), high), rel_prob(satisfied(pat_1), low))
+
+# confirm_forward_expansion_from_single_datum:
 #   facts:
-#   - surgery_recommended(pat_1)
-#   - supports(rel_prob(satisfied(X), high), surgery_recommended(X), norm)
-#   - supports(rel_prob(satisfied(X), moderate), not(surgery_recommended(X)), norm)
-#   - supports(rel_prob(satisfied(X), low), not(surgery_recommended(X)), norm)
+#   - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
 #   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
 #   turns:
-#   - U: ask([]>>surgery_recommended(pat_1))
-#   - S: confirm(surgery_recommended(pat_1))
-#   - U: ask([E, M]>>supports(E, surgery_recommended(pat_1), M))
-#   - S: assert(rel_prob(satisfied(pat_1), high))
-#   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
 #   - S: assert(rel_value(back_pain(pat_1), low))
-
-# explain_chained_inference_with_non_probabilistic_datum:
-#   facts:
-#   - surgery_recommended(pat_1)
-#   - supports(rel_prob(satisfied(X), high), surgery_recommended(X), norm)
-#   - supports(rel_prob(satisfied(X), moderate), not(surgery_recommended(X)), norm)
-#   - supports(rel_prob(satisfied(X), low), not(surgery_recommended(X)), norm)
-#   inherit: [pat_1, prefer_empirically_grounded_datum, spinal_stenosis_model]
-#   turns:
-#   - U: ask([]>>surgery_recommended(pat_1))
-#   - S: confirm(surgery_recommended(pat_1))
-#   - U: ask([E, M]>>supports(E, surgery_recommended(pat_1), M))
-#   - S: assert(rel_value(back_pain(pat_1), low))
+#   - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
+#   - S: confirm(supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), association))
 
 # confirm_warrant:
 #   inherit: [spinal_stenosis_model]
@@ -241,24 +296,6 @@ deliver_explanations_incrementally:
 #   turns:
 #   - U: ask([]>>supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), _))
 #   - S: disconfirm(not(supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), association)))
-
-# respond_to_open_request_for_forward_expansion:
-#   facts:
-#   - agenda(respond([X]>>rel_value(back_pain(pat_1), X), system))
-#   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
-#   turns:
-#   - S: assert(rel_value(back_pain(pat_1), low))
-#   - U: ask([C, M]>>supports(rel_value(back_pain(pat_1), low), C, M))
-#   - S: assert(rel_prob(satisfied(pat_1), high))
-
-# confirm_forward_expansion_from_single_datum:
-#   facts:
-#   - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
-#   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
-#   turns:
-#   - S: assert(rel_value(back_pain(pat_1), low))
-#   - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
-#   - S: confirm(supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), association))
 
 # confirm_forward_expansion_from_conjunction:
 #   facts:
@@ -380,47 +417,6 @@ deliver_explanations_incrementally:
 #       presuppositions:
 #       - rel_value(back_pain(pat_1), high)
 #   - S: icm(acceptance, negative, not(rel_value(back_pain(pat_1), high)))
-
-# explain_moderate_estimated_probability_caused_by_moderate_feature_values:
-#   facts:
-#   - value(back_pain(pat_1), 5)
-#   - rel_value(back_pain(pat_1), moderate)
-#   - rel_value(disability(pat_1), moderate)
-#   - rel_prob(satisfied(pat_1), moderate)
-#   - agenda(respond([]>>satisfied(pat_1), system))
-#   inherit: [select_warrant_triggering_data, spinal_stenosis_model]
-#   turns:
-#   - S: assert(rel_prob(satisfied(pat_1), moderate))
-#   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), moderate), M))
-#   - S: assert([rel_value(back_pain(pat_1), moderate), rel_value(disability(pat_1), moderate)])
-
-# explain_moderate_estimated_probability_with_contrasting_implications:
-#   facts:
-#   - value(back_pain(pat_1), 7)
-#   - rel_value(disability(pat_1), low)
-#   - value(disability(pat_1), 26)
-#   - rel_value(back_pain(pat_1), high)
-#   - rel_prob(satisfied(pat_1), moderate)
-#   - agenda(respond([]>>satisfied(pat_1), system))
-#   inherit: [select_warrant_triggering_data, spinal_stenosis_model]
-#   turns:
-#   - S: assert(rel_prob(satisfied(pat_1), moderate))
-#   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), moderate), M))
-#   - S:
-#       move:
-#       - infer(rel_value(disability(pat_1), low), rel_prob(satisfied(pat_1), high))
-#       - infer(rel_value(back_pain(pat_1), high), rel_prob(satisfied(pat_1), low))
-
-# explain_numerical_claim_with_contrasting_implications:
-#   inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
-#   turns:
-#   - U: ask([X]>>prob(satisfied(pat_1), X))
-#   - S: assert(prob(satisfied(pat_1), 0.75))
-#   - U: ask([E, M]>>supports(E, prob(satisfied(pat_1), 0.75), M))
-#   - S:
-#       move:
-#       - infer([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low), value(has_other_illness(pat_1), false)], rel_prob(satisfied(pat_1), high))
-#       - infer([rel_value(back_pain_duration(pat_1), high), rel_value(leg_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), low))
 
 # explain_numerical_claim_with_1st_warrant:
 #   inherit: [pat_1, select_1st_warrant, spinal_stenosis_model]

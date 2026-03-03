@@ -15,13 +15,8 @@ valid_answer([]>>P, rel_prob(P, R)) :-
 	@rel_prob(P, R).
 
 valid_answer(Q, D) :-
-  has_variable_and_body(Q, E, supports(E, C, _)),
-  @supports(D, C, _),
-  @D.
-
-% valid_answer(Q, D) :-
-% 	has_variable_and_body(Q, E, supports(E, C, _)),
-% 	supports_directly_or_indirectly(D, C).
+	has_variable_and_body(Q, E, supports(E, C, _)),
+	supports_directly_or_indirectly(D, C).
 
 valid_answer(Q, W) :-
 	has_variable_and_body(Q, E, supports(E, C, _)),
@@ -31,13 +26,13 @@ valid_answer(Q, W) :-
 	copy_term(WA, WA1),
 	@WA1.
 
-% valid_answer(Q, C) :-
-%     has_variable_and_body(Q, XC, supports(D, XC, _)),
-% 	supports_directly_or_indirectly(D, C).
+valid_answer(Q, C) :-
+    has_variable_and_body(Q, XC, supports(D, XC, _)),
+	supports_directly_or_indirectly(D, C).
 
-% valid_answer(Vars>>supports(E, prob(Event, _), M), A) :-
-% 	member(R, [low, high]),
-% 	valid_answer(Vars>>supports(E, rel_prob(Event, R), M), A).
+valid_answer(Vars>>supports(E, prob(Event, _), M), A) :-
+	member(R, [low, high]),
+	valid_answer(Vars>>supports(E, rel_prob(Event, R), M), A).
 
 % valid_answer([M]>>P, P) :-
 % 	P = supports(_, _, M),
@@ -72,36 +67,40 @@ has_variable_and_body(Vars>>Body, Var, Body) :-
 % 		@D
 % 	).
 
-% supports_directly_or_indirectly(A, C) :-
-% 	@supports(A1, C, _),
-% 	@A1,
-% 	supports_directly_or_indirectly(A, A1).
+supports_directly_or_indirectly(A, C) :-
+  @supports(A, C, _),
+  @A.
 
-% supports_directly_or_indirectly(A, C) :-
-% 	C = rel_prob(Event, moderate),
-% 	@C,
-% 	findall(E, (
-% 		member(R, [high, low]),
-% 		supports_directly_or_indirectly(E, rel_prob(Event, R))
-% 		), Evidence),
-% 	member(A, Evidence).
+supports_directly_or_indirectly(A, C) :-
+	@supports(A1, C, _),
+	@A1,
+	supports_directly_or_indirectly(A, A1).
+
+supports_directly_or_indirectly(A, C) :-
+	C = rel_prob(Event, moderate),
+	@C,
+	findall(E, (
+		member(R, [high, low]),
+		supports_directly_or_indirectly(E, rel_prob(Event, R))
+		), Evidence),
+	member(A, Evidence).
 
 
-% answer_move(Vars>>supports(E, C, M), _, As, Move) :-
-% 	member(C, [rel_prob(P, moderate), prob(P, _)]),
-% 	findall(
-% 		infer(NormalizedEvidence, rel_prob(P, R)),
-% 		(
-% 			member(R, [high, low]),
-% 			findall(A,
-% 				(member(A, As), valid_answer(Vars>>supports(E, rel_prob(P, R), M), A)),
-% 				Evidence),
-% 			Evidence \== [],
-% 			normalize(Evidence, NormalizedEvidence)
-% 		),
-% 		Inferences),
-% 	Inferences \== [],
-% 	normalize(Inferences, Move).
+answer_move(Vars>>supports(E, C, M), _, As, Move) :-
+	member(C, [rel_prob(P, moderate), prob(P, _)]),
+	findall(
+		infer(NormalizedEvidence, rel_prob(P, R)),
+		(
+			member(R, [high, low]),
+			findall(A,
+				(member(A, As), valid_answer(Vars>>supports(E, rel_prob(P, R), M), A)),
+				Evidence),
+			Evidence \== [],
+			normalize(Evidence, NormalizedEvidence)
+		),
+		Inferences),
+	Inferences \== [],
+	normalize(Inferences, Move).
 
 % answer_move([]>>P, user, [P], confirm(P)).
 
