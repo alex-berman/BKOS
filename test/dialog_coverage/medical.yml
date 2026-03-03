@@ -150,7 +150,7 @@ excerpt_3_8_johannesen_p32:
   - rel_value(blood_pressure(pat_1), high)
   - supports(rel_value(blood_pressure(X), high), fentanyl_recommended(X), association)
   - agenda(argue(fentanyl_recommended(pat_1)))
-  inherit: [select_exact_data]
+  inherit: [select_numerical_data]
   turns:
   # The patient's blood pressure is 177, so administer fentanyl
   - S: infer(value(blood_pressure(pat_1), 177), fentanyl_recommended(pat_1))

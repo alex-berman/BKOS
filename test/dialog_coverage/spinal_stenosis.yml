@@ -83,30 +83,6 @@ warrant_based_explanans:
   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
   - S: assert(supports(rel_value(back_pain(X), low), rel_prob(satisfied(X), high), association))
 
-# explain_claim_with_exact_data:
-#   inherit: [pat_1, select_exact_data, spinal_stenosis_model]
-#   turns:
-#   - U: ask([]>>satisfied(pat_1))
-#   - S: confirm(rel_prob(satisfied(pat_1), high))
-#   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
-#   - S: assert([
-#         value(back_pain(pat_1), 4),
-#         value(disability(pat_1), 26),
-#         value(has_other_illness(pat_1), false)
-#        ])
-
-# convey_data_both_relatively_and_exactly:
-#   inherit: [pat_1, select_data_both_relatively_and_exactly, spinal_stenosis_model]
-#   turns:
-#   - U: ask([]>>satisfied(pat_1))
-#   - S: confirm(rel_prob(satisfied(pat_1), high))
-#   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
-#   - S: assert([
-#         rel_value(back_pain(pat_1), low), value(back_pain(pat_1), 4),
-#         rel_value(disability(pat_1),low), value(disability(pat_1), 26),
-#         value(has_other_illness(pat_1), false)
-#        ])
-
 # elaborate_datum_quantitatively:
 #   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
 #   turns:
@@ -275,6 +251,30 @@ explain_moderate_estimated_probability_with_contradictory_implications:
       move:
       - infer(rel_value(disability(pat_1), low), rel_prob(satisfied(pat_1), high))
       - infer(rel_value(back_pain(pat_1), high), rel_prob(satisfied(pat_1), low))
+
+explain_claim_with_numerical_data:
+  inherit: [pat_1, select_numerical_data, spinal_stenosis_model]
+  turns:
+  - U: ask([]>>satisfied(pat_1))
+  - S: confirm(rel_prob(satisfied(pat_1), high))
+  - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
+  - S: assert([
+        value(back_pain(pat_1), 4),
+        value(disability(pat_1), 26),
+        value(has_other_illness(pat_1), false)
+       ])
+
+convey_data_both_relatively_and_numerically:
+  inherit: [pat_1, select_data_both_relatively_and_numerically, spinal_stenosis_model]
+  turns:
+  - U: ask([]>>satisfied(pat_1))
+  - S: confirm(rel_prob(satisfied(pat_1), high))
+  - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
+  - S: assert([
+        rel_value(back_pain(pat_1), low), value(back_pain(pat_1), 4),
+        rel_value(disability(pat_1),low), value(disability(pat_1), 26),
+        value(has_other_illness(pat_1), false)
+       ])
 
 # confirm_forward_expansion_from_single_datum:
 #   facts:
