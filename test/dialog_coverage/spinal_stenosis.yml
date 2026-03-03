@@ -309,6 +309,52 @@ disconfirm_warrant:
   - U: ask([]>>supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), _))
   - S: disconfirm(not(supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), association)))
 
+reject_move_with_presupposition_violation_wrt_rel_prob:
+  inherit: [pat_1, spinal_stenosis_model]
+  turns:
+  - U:
+      move: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), low), M))
+      presuppositions:
+      - rel_prob(satisfied(pat_1), low)
+  - S: icm(acceptance, negative, not(rel_prob(satisfied(pat_1), low)))
+
+reject_move_with_presupposition_violation_wrt_rel_value:
+  inherit: [pat_1, spinal_stenosis_model]
+  turns:
+  - U:
+      move: ask([]>>supports(rel_value(back_pain(pat_1), high), rel_prob(satisfied(pat_1), high), _))
+      presuppositions:
+      - rel_value(back_pain(pat_1), high)
+  - S: icm(acceptance, negative, not(rel_value(back_pain(pat_1), high)))
+
+reject_unanswerable_question_concerning_unknown_concept:
+  inherit: [pat_1, spinal_stenosis_model]
+  turns:
+  - U: ask([X]>>supports(has_other_illness(pat_1, X), rel_prob(satisfied(pat_1), low), _))
+  - S: icm(acceptance, negative, lack_knowledge)
+
+reject_unanswerable_question_concerning_general_causal_relation:
+  inherit: [spinal_stenosis_model]
+  turns:
+  - U: ask([]>>supports(rel_value(back_pain(X), _), rel_prob(satisfied(X), _), causation))
+  - S: icm(acceptance, negative, lack_knowledge)
+
+reject_unanswerable_question_concerning_cause_of_specific_datum:
+  inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
+  turns:
+  - U: ask([]>>satisfied(pat_1))
+  - S: confirm(rel_prob(satisfied(pat_1), high))
+  - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
+  - S: assert(rel_value(back_pain(pat_1), low))
+  - U: ask([E]>>supports(E, rel_value(back_pain(pat_1), low), causation))
+  - S: icm(acceptance, negative, lack_knowledge)
+
+signal_negative_understanding:
+  turns:
+  - U:
+      unresolvable_phrase: heart disease
+  - S: icm(understanding, negative, unresolvable_phrase("heart disease"))
+
 # confirm_forward_expansion_from_single_datum:
 #   facts:
 #   - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
@@ -354,34 +400,6 @@ disconfirm_warrant:
 #   - U: ask([M]>>supports(rel_value(back_pain(X), low), rel_prob(satisfied(X), high), M))
 #   - S: assert(supports(rel_value(back_pain(X), low), rel_prob(satisfied(X), high), association))
 
-# reject_unanswerable_question_concerning_unknown_concept:
-#   inherit: [pat_1, spinal_stenosis_model]
-#   turns:
-#   - U: ask([X]>>supports(has_other_illness(pat_1, X), rel_prob(satisfied(pat_1), low), _))
-#   - S: icm(acceptance, negative, lack_knowledge)
-
-# reject_unanswerable_question_concerning_cause_of_specific_datum:
-#   inherit: [pat_1, select_1st_datum, spinal_stenosis_model]
-#   turns:
-#   - U: ask([]>>satisfied(pat_1))
-#   - S: confirm(rel_prob(satisfied(pat_1), high))
-#   - U: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M))
-#   - S: assert(rel_value(back_pain(pat_1), low))
-#   - U: ask([E]>>supports(E, rel_value(back_pain(pat_1), low), causation))
-#   - S: icm(acceptance, negative, lack_knowledge)
-
-# reject_unanswerable_question_concerning_general_causal_relation:
-#   inherit: [spinal_stenosis_model]
-#   turns:
-#   - U: ask([]>>supports(rel_value(back_pain(X), _), rel_prob(satisfied(X), _), causation))
-#   - S: icm(acceptance, negative, lack_knowledge)
-
-# signal_negative_understanding:
-#   turns:
-#   - U:
-#       unresolvable_phrase: heart disease
-#   - S: icm(understanding, negative, unresolvable_phrase("heart disease"))
-
 # disconfirm_isolated_datum_explanans:
 #   inherit: [pat_1, spinal_stenosis_model]
 #   facts:
@@ -399,24 +417,6 @@ disconfirm_warrant:
 #   - S: assert(rel_prob(satisfied(pat_1), high))
 #   - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(back_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), high), _))
 #   - S: disconfirm(not(supports([rel_value(back_pain_duration(pat_1), high)], rel_prob(satisfied(pat_1), high), _)))
-
-# reject_move_with_presupposition_violation_wrt_rel_prob:
-#   inherit: [pat_1, spinal_stenosis_model]
-#   turns:
-#   - U:
-#       move: ask([E, M]>>supports(E, rel_prob(satisfied(pat_1), low), M))
-#       presuppositions:
-#       - rel_prob(satisfied(pat_1), low)
-#   - S: icm(acceptance, negative, not(rel_prob(satisfied(pat_1), low)))
-
-# reject_move_with_presupposition_violation_wrt_rel_value:
-#   inherit: [pat_1, spinal_stenosis_model]
-#   turns:
-#   - U:
-#       move: ask([]>>supports(rel_value(back_pain(pat_1), high), rel_prob(satisfied(pat_1), high), _))
-#       presuppositions:
-#       - rel_value(back_pain(pat_1), high)
-#   - S: icm(acceptance, negative, not(rel_value(back_pain(pat_1), high)))
 
 # explain_numerical_claim_with_1st_warrant:
 #   inherit: [pat_1, select_1st_warrant, spinal_stenosis_model]

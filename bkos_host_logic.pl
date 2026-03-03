@@ -126,9 +126,9 @@ select_answers(Q, Candidates, Result) :-
 	).
 
 
-% contradicts(rel_prob(Event, X), rel_prob(Event, Y)) :-
-% 	X \== Y.
+contradicts(rel_prob(Event, X), rel_prob(Event, Y)) :-
+	X \== Y.
 
-% contradicts(rel_value(Property, X), rel_value(Property, Y)) :-
-% 	X \== Y.
+contradicts(rel_value(Property, X), rel_value(Property, Y)) :-
+	X \== Y.
 	  

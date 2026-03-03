@@ -1,20 +1,20 @@
 :- ensure_loaded(isu_syntax).
 
-% signal_negative_understanding ::
-% 	recognized(unresolvable_phrase(Phrase)) -*
-% 	utter(icm(understanding, negative, unresolvable_phrase(Phrase))).
+signal_negative_understanding ::
+	recognized(unresolvable_phrase(Phrase)) -*
+	utter(icm(understanding, negative, unresolvable_phrase(Phrase))).
 
-% reject_move_with_presupposition_violation :: [
-% 	recognized(presupposition(Presupposition)),
-% 	^Belief,
-% 	$contradicts(Belief, Presupposition),
-% 	recognized(move(_))
-% 	] -* utter(icm(acceptance, negative, not(Presupposition))).
+reject_move_with_presupposition_violation :: [
+	recognized(presupposition(Presupposition)),
+	^Belief,
+	$contradicts(Belief, Presupposition),
+	recognized(move(_))
+	] -* utter(icm(acceptance, negative, not(Presupposition))).
 
-% reject_unanswerable_question :: [
-% 	recognized(move(ask(Q))),
-% 	$(\+ valid_answer(Q, _))
-% 	] -* utter(icm(acceptance, negative, lack_knowledge)).
+reject_unanswerable_question :: [
+	recognized(move(ask(Q))),
+	$(\+ valid_answer(Q, _))
+	] -* utter(icm(acceptance, negative, lack_knowledge)).
 
 mark_move_as_accepted :: [
 	recognized(move(Move)),
