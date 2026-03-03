@@ -1,4 +1,4 @@
-select_data_both_relatively_and_exactly:
+select_data_both_relatively_and_numerically:
   facts:
   - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
         include([A]>>(A \= supports(_, _, _)), Valid, Selected))
@@ -14,7 +14,7 @@ select_warrant_triggering_data:
       ), Selected)
     )
 
-select_exact_data:
+select_numerical_data:
   facts:
   - answer_selection_policy([E, M]>>supports(E, _, M), Valid, Selected,
         include([A]>>(A = value(_, _)), Valid, Selected))
@@ -44,7 +44,7 @@ select_1st_warrant:
   - answer_selection_policy([E, M]>>supports(E, _, M), Valid, [SelectedAnswer],
       (member(SelectedAnswer, Valid), SelectedAnswer = supports(_, _, _)))
 
-prefer_non_probabilistic_datum:
+prefer_empirically_grounded_datum:
   facts:
   - answer_selection_policy([E, M]>>supports(E, _, M),
       Valid,

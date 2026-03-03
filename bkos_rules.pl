@@ -36,7 +36,7 @@ integrate_acknowledgement :: [
 
 respond :: [
 	agenda(respond(Q, Interrogator)),
-	$findall(P, valid_answer(Q, P), ValidAnswers),
+	$findall(A, valid_answer(Q, A), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
 	$answer_move(Q, Interrogator, SelectedAnswers, Move)
 	] -* [
@@ -46,9 +46,9 @@ respond :: [
 
 resume_responding :: [
 	agenda(resume(respond(Q, Interrogator))),
-	$findall(P, (
-		valid_answer(Q, P),
-		\+ (@responded(Q, Ps), member(P, Ps))
+	$findall(A, (
+		valid_answer(Q, A),
+		\+ (@responded(Q, As), member(A, As))
 	), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
 	$(SelectedAnswers \== []),
@@ -61,7 +61,7 @@ resume_responding :: [
 argue :: [
 	agenda(argue(C)),
 	$(Q = [E, M]>>supports(E, C, M)),
-	$findall(P, valid_answer(Q, P), ValidAnswers),
+	$findall(A, valid_answer(Q, A), ValidAnswers),
 	$select_answers(Q, ValidAnswers, SelectedAnswers),
 	$normalize(SelectedAnswers, A)
 	] -* utter(infer(A, C)).

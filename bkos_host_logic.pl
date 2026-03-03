@@ -2,6 +2,9 @@
 :- ensure_loaded(db).
 
 
+valid_answer([_]>>P, P) :-
+	@P.
+
 valid_answer([]>>P, P) :-
 	@P.
 
@@ -30,14 +33,6 @@ valid_answer(Q, C) :-
 valid_answer(Vars>>supports(E, prob(Event, _), M), A) :-
 	member(R, [low, high]),
 	valid_answer(Vars>>supports(E, rel_prob(Event, R), M), A).
-
-valid_answer([M]>>P, P) :-
-	P = supports(_, _, M),
-	@P.
-
-valid_answer([_]>>P, P) :-
-	P \= supports(_, _, _),
-	@P.
 
 valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
 	is_list(Es),

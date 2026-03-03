@@ -24,7 +24,7 @@ excerpt_3_2_ahus_variant_1:
   - supports(rel_value(oxygen_saturation(X), low), rel_prob(lung_abnormality(X), high), association)
   - supports(rel_prob(lung_abnormality(X), high), chest_xray_recommended(X), norm)
   - agenda(respond([]>>chest_xray_recommended(pat_1), system))
-  inherit: [prefer_non_probabilistic_datum]
+  inherit: [prefer_empirically_grounded_datum]
   turns:
   # I recommend performing a chest X-ray.
   - S: assert(chest_xray_recommended(pat_1))
@@ -150,7 +150,7 @@ excerpt_3_8_johannesen_p32:
   - rel_value(blood_pressure(pat_1), high)
   - supports(rel_value(blood_pressure(X), high), fentanyl_recommended(X), association)
   - agenda(argue(fentanyl_recommended(pat_1)))
-  inherit: [select_exact_data]
+  inherit: [select_numerical_data]
   turns:
   # The patient's blood pressure is 177, so administer fentanyl
   - S: infer(value(blood_pressure(pat_1), 177), fentanyl_recommended(pat_1))
