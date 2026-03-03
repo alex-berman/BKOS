@@ -276,6 +276,39 @@ convey_data_both_relatively_and_numerically:
         value(has_other_illness(pat_1), false)
        ])
 
+confirm_datum_explanans_for_belief_held_by_system:
+  inherit: [pat_1, spinal_stenosis_model]
+  facts:
+  - agenda(respond([]>>satisfied(pat_1), system))
+  turns:
+  - S: assert(rel_prob(satisfied(pat_1), high))
+  - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
+  - S: confirm(supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), association))
+
+confirm_forward_expansion_from_conjunction:
+  facts:
+  - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
+  inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
+  turns:
+  - S: assert([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low), value(has_other_illness(pat_1), false)])
+  - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
+  - S: confirm(supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
+
+confirm_datum_explanans_for_belief_not_held_by_system:
+  inherit: [pat_1, spinal_stenosis_model]
+  facts:
+  - agenda(respond([]>>satisfied(pat_1), system))
+  turns:
+  - S: assert(rel_prob(satisfied(pat_1), high))
+  - U: ask([]>>supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), _))
+  - S: confirm(supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), association))
+
+disconfirm_warrant:
+  inherit: [spinal_stenosis_model]
+  turns:
+  - U: ask([]>>supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), _))
+  - S: disconfirm(not(supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), association)))
+
 # confirm_forward_expansion_from_single_datum:
 #   facts:
 #   - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
@@ -290,21 +323,6 @@ convey_data_both_relatively_and_numerically:
 #   turns:
 #   - U: ask([]>>supports(rel_value(back_pain(X), low), rel_prob(satisfied(X), high), _))
 #   - S: confirm(supports(rel_value(back_pain(X), low), rel_prob(satisfied(X), high), association))
-
-# disconfirm_warrant:
-#   inherit: [spinal_stenosis_model]
-#   turns:
-#   - U: ask([]>>supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), _))
-#   - S: disconfirm(not(supports(rel_value(back_pain(X), high), rel_prob(satisfied(X), high), association)))
-
-# confirm_forward_expansion_from_conjunction:
-#   facts:
-#   - agenda(respond([E, M]>>supports(E, rel_prob(satisfied(pat_1), high), M), system))
-#   inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
-#   turns:
-#   - S: assert([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low), value(has_other_illness(pat_1), false)])
-#   - U: ask([]>>supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
-#   - S: confirm(supports([rel_value(back_pain(pat_1), low), rel_value(disability(pat_1), low)], rel_prob(satisfied(pat_1), high), _))
 
 # provide_evidence_against_claim:
 #   inherit: [pat_1, select_warrant_triggering_data, spinal_stenosis_model]
@@ -363,24 +381,6 @@ convey_data_both_relatively_and_numerically:
 #   - U:
 #       unresolvable_phrase: heart disease
 #   - S: icm(understanding, negative, unresolvable_phrase("heart disease"))
-
-# confirm_datum_explanans_for_belief_held_by_system:
-#   inherit: [pat_1, spinal_stenosis_model]
-#   facts:
-#   - agenda(respond([]>>satisfied(pat_1), system))
-#   turns:
-#   - S: assert(rel_prob(satisfied(pat_1), high))
-#   - U: ask([]>>supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), _))
-#   - S: confirm(supports(rel_value(back_pain(pat_1), low), rel_prob(satisfied(pat_1), high), association))
-
-# confirm_datum_explanans_for_belief_not_held_by_system:
-#   inherit: [pat_1, spinal_stenosis_model]
-#   facts:
-#   - agenda(respond([]>>satisfied(pat_1), system))
-#   turns:
-#   - S: assert(rel_prob(satisfied(pat_1), high))
-#   - U: ask([]>>supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), _))
-#   - S: confirm(supports(rel_value(back_pain_duration(pat_1), high), rel_prob(satisfied(pat_1), low), association))
 
 # disconfirm_isolated_datum_explanans:
 #   inherit: [pat_1, spinal_stenosis_model]

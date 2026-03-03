@@ -5,11 +5,11 @@
 valid_answer([_]>>P, P) :-
 	@P.
 
-% valid_answer([]>>P, P) :-
-% 	@P.
+valid_answer([]>>P, P) :-
+	@P.
 
-% valid_answer([]>>P, not(P)) :-
-% 	@not(P).
+valid_answer([]>>P, not(P)) :-
+	@not(P).
 
 valid_answer([]>>P, rel_prob(P, R)) :-
 	@rel_prob(P, R).
@@ -42,13 +42,13 @@ valid_answer(Vars>>supports(E, prob(Event, _), M), A) :-
 % 	P \= supports(_, _, _),
 % 	@P.
 
-% valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
-% 	is_list(Es),
-% 	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
+valid_answer([]>>supports(Es, C, M), supports(Es, C, M)) :-
+	is_list(Es),
+	forall(member(E, Es), supports_directly_or_indirectly(E, C)).
 
-% valid_answer([]>>supports(Es, C, M), not(supports(Zs, C, M))) :-
-% 	findall(Z, (member(Z, Es), \+ supports_directly_or_indirectly(Z, C)), Zs),
-% 	Zs \== [].
+valid_answer([]>>supports(Es, C, M), not(supports(Zs, C, M))) :-
+	findall(Z, (member(Z, Es), \+ supports_directly_or_indirectly(Z, C)), Zs),
+	Zs \== [].
 
 
 has_variable_and_body(Vars>>Body, Var, Body) :-
@@ -98,11 +98,11 @@ answer_move(Vars>>supports(E, C, M), _, As, Move) :-
 	Inferences \== [],
 	normalize(Inferences, Move).
 
-% answer_move([]>>P, user, [P], confirm(P)).
+answer_move([]>>P, user, [P], confirm(P)).
 
-% answer_move([]>>P, user, [not(P)], disconfirm(not(P))).
+answer_move([]>>P, user, [not(P)], disconfirm(not(P))).
 
-% answer_move([]>>supports(_, C, M), user, [not(supports(E, C, M))], disconfirm(not(supports(E, C, M)))).
+answer_move([]>>supports(_, C, M), user, [not(supports(E, C, M))], disconfirm(not(supports(E, C, M)))).
 
 answer_move([]>>P, user, [rel_prob(P, high)], confirm(rel_prob(P, high))).
 
