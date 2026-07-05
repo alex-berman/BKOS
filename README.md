@@ -2,7 +2,7 @@ BKOS (pronounced _because_) is a dialogue manager for **conversationally explain
 
 BKOS is primarily intended for faithfully explaining classifications made by interpretable models with monotonic relationships between features and target, without any interactions between features, e.g. logistic regression and other kinds of generalised linear models.
 
-BKOS' conversational capabilities are described in Alexander Berman's PhD thesis (in preparation).
+BKOS' conversational capabilities are described in Alexander Berman's PhD thesis (2026).
 
 # Development process
 BKOS has been developed through a process of dialogue distillation (Dahlbäck et al. 2000; Larsson et al. 2000). Through this process, human-human dialogues are rewritten to analogous human-computer interactions in ways that inform design and implementation of a dialogue system serving in the role of one of the human interlocutors. Specifically, BKOS was developed by distilling the following corpora:
@@ -10,7 +10,7 @@ BKOS has been developed through a process of dialogue distillation (Dahlbäck et
 - 12 medical spoken dialogues from 3 empirical sources: doctor-patient consultations from Ahus, anesthesiologists' interactions during neurosurgical operations, and a textbook in medicine focusing on the encounter between patient and doctor
 - 35 experimentally collected web chats between laypersons revolving around AI-assisted personality estimation
 
-The distillation process and corpora are furhter described in Berman (forthcoming).
+The distillation process and corpora are furhter described in Berman (2026).
 
 # Validating system behaviour
 There is currently no interactive version of the system. However, dialogue coverage tests can be validated by running the test suite:
@@ -45,4 +45,4 @@ Jönsson, A.; Dahlbäck, N. Distilling dialogues - A method using natural dialog
 
 Larsson, S.; Santamarta, L.; Jönsson, A. Using the process of distilling dialogues to understand dialogue systems. In Proceedings of the Proceedings of ICSLP 2000, 2000, pp. 374–377.
 
-Berman, A. PhD thesis, University of Gothenburg, forthcoming.
+Berman, A. PhD thesis, University of Gothenburg, 2026. https://gupea.ub.gu.se/items/af8adfc4-a679-457d-af00-c049c5eff683
